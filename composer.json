@@ -1,0 +1,28 @@
+{
+    "name": "sjaakp/yii2-pluto",
+    "description": "User management extension for Yii2",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","user","login","access","rbac"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sjaak Priester",
+            "email": "sjaak@sjaakpriester.nl"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "yiisoft/yii2": "~2.0.14",
+        "yiisoft/yii2-bootstrap4": "^2.0",
+        "yiisoft/yii2-swiftmailer": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "sjaakp\\pluto\\": ""
+        }
+    },
+    "extra": {
+        "bootstrap": "sjaakp\\pluto\\Module"
+    }
+}
+

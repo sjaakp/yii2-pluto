@@ -1,0 +1,23 @@
+fieldset {
+    border: 1px solid #ced4da;
+    padding: 0 1em;
+    border-radius: .7em;
+}
+legend {
+    display: inline-block;
+    width: auto;
+    padding: .2em;
+    margin-left: 1em;
+}
+.bootstrap-duallistbox-container .move,
+.bootstrap-duallistbox-container .remove,
+.bootstrap-duallistbox-container .moveall,
+.bootstrap-duallistbox-container .removeall {
+    width: auto;
+}
+.bootstrap-duallistbox-container .buttons {
+    display: flex;
+}
+.bootstrap-duallistbox-container .box1 .buttons {
+    justify-content: flex-end;
+}
