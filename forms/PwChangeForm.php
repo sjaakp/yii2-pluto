@@ -13,6 +13,7 @@ class PwChangeForm extends Model
     /* @var $user User */
     public $user;
     public $currentPassword;
+    public $flags;
 
     /**
      * {@inheritdoc}
@@ -27,15 +28,14 @@ class PwChangeForm extends Model
     }
 
     /**
-     * Validates password.
-     * This method serves as the inline validation for password.
-     *
+     * Inline validation for password.
      * @param string $attribute the attribute currently being validated
      * @param array $params the additional name-value pairs given in the rule
      */
     public function validatePassword($attribute, $params)
     {
-        if (!$this->user->validatePassword($this->$attribute)) {
+        $r = $this->user->validatePassword($this->$attribute);
+        if (! $r) {
             $this->addError($attribute, Yii::t('pluto', 'Incorrect password.'));
         }
     }
@@ -47,8 +47,8 @@ class PwChangeForm extends Model
      */
     public function validate($attributeNames = null, $clearErrors = true)
     {
-        $r = $this->user->validate($attributeNames, $clearErrors);
-        if ($r) $r = parent::validate($attributeNames, $clearErrors);
+        $r = parent::validate($attributeNames, $clearErrors);       // first, validate form
+        if ($r) $r = $this->user->validate($attributeNames, $clearErrors); // then, User (this sets new password)
         return $r;
     }
 
@@ -60,5 +60,15 @@ class PwChangeForm extends Model
         return [
             'currentPassword' => Yii::t('pluto', 'Old password'),
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function load($data, $formName = null)
+    {
+        $r = parent::load($data, 'PwChangeForm');
+        if ($r) $r = $this->user->load($data, 'User');
+        return $r;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use sjaakp\pluto\Module;
 use yii\helpers\Html;
-use yii\captcha\Captcha;
+use sjaakp\pluto\Module;
+use sjaakp\pluto\widgets\RevealPassword;
 
 /* @var $this yii\web\View */
 /* @var $model sjaakp\pluto\forms\PwChangeForm */
@@ -14,7 +14,7 @@ $module = $context->module;
 $viewOptions = $module->viewOptions;
 $dlgXtra = ($module->dialogExtras['all'] ?? 0) | ($module->dialogExtras[$context->action->id] ?? 0);
 $passwordClass = 'sjaakp\pluto\widgets\\';
-$passwordClass .= ($dlgXtra & Module::DLG_PW_REVEAL) ? 'RevealPassword' : 'Password';
+$passwordClass .= ($dlgXtra & Module::PW_REVEAL) ? 'RevealPassword' : 'Password';
 
 $this->title = Yii::t('pluto', 'Change password');
 $this->params['breadcrumbs'][] = $this->title;
@@ -22,24 +22,30 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= Html::beginTag('div', $viewOptions['row']) ?>
     <?= Html::beginTag('div', $viewOptions['col']) ?>
         <h1><?= Html::encode($this->title) ?></h1>
-        <?php $form = $module->formClass::begin(); ?>
-            <?= $form->field($model, 'currentPassword')->widget($viewOptions['passwordClass'],
+        <?php $form = $module->formClass::begin();
+if ($model->flags & Module::PW_REVEAL): ?>
+            <?= $form->field($model, 'currentPassword')->widget(RevealPassword::class,
                 [ 'options'  => ['autofocus' => true]]) ?>
             <?= $form->field($model->user, 'password')
-                ->label(Yii::t('pluto', 'New password'))->hint($context->module->passwordHint)
-                ->widget($viewOptions['passwordClass']) ?>
-        <?php if ($dlgXtra & Module::DLG_DOUBLE_PW): ?>
+                ->label(Yii::t('pluto', 'New password'))->hint($module->passwordHint)
+                ->widget(RevealPassword::class) ?>
+        <?php if ($model->flags & Module::PW_DOUBLE): ?>
             <?= $form->field($model->user, 'password_repeat')
                 ->label(Yii::t('pluto', 'New password (again)'))
-                ->widget($viewOptions['passwordClass']) ?>
-        <?php endif; ?>
-        <?php if ($dlgXtra & Module::DLG_CAPTCHA): ?>
-            <?= $form->field($model->user, 'captcha')->widget(Captcha::class, [
-                'captchaAction' => ['default/captcha'],
-                'template' => '<br />{image}{input}',
-                'options' => [ 'class' => 'form-control d-inline-block col-4' ],
-            ]) ?>
-        <?php endif; ?>
+                ->widget(RevealPassword::class) ?>
+        <?php endif;
+else: ?>
+    <?= $form->field($model, 'currentPassword')->passwordInput($options ?? []) ?>
+    <?= $form->field($model->user, 'password')
+        ->label(Yii::t('pluto', 'New password'))->hint($module->passwordHint)
+        ->passwordInput() ?>
+    <?php if ($model->flags & Module::PW_DOUBLE): ?>
+        <?= $form->field($model->user, 'password_repeat')
+            ->label(Yii::t('pluto', 'New password (again)'))
+            ->passwordInput() ?>
+    <?php endif;
+endif; ?>
+        <?= $this->render('_captcha', ['model' => $model->user, 'form' => $form]) ?>
         <div class="form-group mt-4">
                 <?= Html::submitButton(Yii::t('pluto', 'Save'), $viewOptions['button']) ?>
             </div>

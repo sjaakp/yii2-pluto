@@ -5,12 +5,12 @@ namespace sjaakp\pluto\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\data\ArrayDataProvider;
-use yii\helpers\ArrayHelper;
-use sjaakp\pluto\models\Permission;
+use sjaakp\pluto\models\Rule;
 
-class PermissionController extends Controller
+class RuleController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -39,62 +39,54 @@ class PermissionController extends Controller
 
     /**
      * @return string
+     * @throws \yii\base\InvalidConfigException
+     * @throws \Exception
      */
     public function actionIndex()
     {
-        $dataProvider = new ArrayDataProvider([
-            'allModels' =>Yii::$app->authManager->getPermissions(),
+        $namespace = $this->module->ruleNamespace;
+
+        $files = FileHelper::findFiles(Yii::getAlias('@' . str_replace('\\', '/', $namespace)), [ 'only' => ['*Rule.php'] ]);
+
+        $fileRules = [];
+        foreach ($files as $path)   {
+            $rule = Yii::createObject($namespace . '\\' . basename($path, '.php'));
+            $fileRules[$rule->name] = $rule;
+        }
+
+        $auth = Yii::$app->authManager;
+
+        $unregistered = array_diff_key($fileRules, $auth->getRules());
+
+        if (Yii::$app->request->isPost) {
+            foreach($unregistered as $rule) {
+                /* @var $rule yii\rbac\Rule */
+                $auth->add($rule);
+            }
+            $unregistered = [];
+        }
+
+        $regData = new ArrayDataProvider([
+            'allModels' => $auth->getRules(),
+        ]);
+        $unregData = new ArrayDataProvider([
+            'allModels' => $unregistered,
         ]);
         return $this->render('index', [
-            'dataProvider' => $dataProvider
+            'regData' => $regData,
+            'unregData' => $unregData,
         ]);
     }
 
     /**
-     * @return mixed
-     * @throws \yii\base\Exception
-     */
-    public function actionCreate()
-    {
-        $model = new Permission();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-            'rules' => $this->getRules(),
-        ]);
-    }
-
-    /**
-     * @param $id
-     * @return mixed
-     * @throws \yii\base\Exception
-     */
-    public function actionUpdate($id)
-    {
-        $model = new Permission($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-            'rules' => $this->getRules(),
-        ]);
-    }
-
-    /**
+     * Deletes Rule from RBAC-system, does not delete Rule's class file
      * @param $id
      * @return \yii\web\Response
      * @throws \Exception
      */
     public function actionDelete($id)
     {
-        $model = new Permission($id);
+        $model = new Rule($id);
         $model->delete();
 
         return $this->redirect(['index']);
@@ -110,13 +102,5 @@ class PermissionController extends Controller
     {
         $vw = $this->module->views[$this->id][$view] ?? $view;
         return parent::render($vw, $params);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRules()
-    {
-        return ArrayHelper::map(Yii::$app->authManager->getRules(), 'name', 'name');
     }
 }

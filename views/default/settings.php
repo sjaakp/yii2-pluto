@@ -1,7 +1,5 @@
 <?php
 
-use sjaakp\pluto\Module;
-use yii\captcha\Captcha;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -12,9 +10,6 @@ use yii\helpers\Html;
 $context = $this->context;
 $module = $context->module;
 $viewOptions = $module->viewOptions;
-$dlgXtra = ($module->dialogExtras['all'] ?? 0) | ($module->dialogExtras[$context->action->id] ?? 0);
-$passwordClass = 'sjaakp\pluto\widgets\\';
-$passwordClass .= ($dlgXtra & Module::DLG_PW_REVEAL) ? 'RevealPassword' : 'Password';
 
 $this->title = Yii::t('pluto', 'Settings');
 $this->params['breadcrumbs'][] = $this->title;
@@ -23,22 +18,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::beginTag('div', $viewOptions['col']) ?>
         <h1><?= Html::encode($this->title) ?></h1>
         <?php $form = $module->formClass::begin(); ?>
-            <fieldset class="border rounded p-3 mb-4 bg-light">
+            <fieldset class="border rounded p-3 mb-4">
                 <legend class="w-auto px-1 bg-white"><?= Yii::t('pluto', 'Change these fields') ?></legend>
                 <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
                 <?= $form->field($model, 'email')->textInput() ?>
             </fieldset>
-            <?= $form->field($model, 'password')->widget($passwordClass) ?>
-        <?php if ($dlgXtra & Module::DLG_DOUBLE_PW): ?>
-            <?= $form->field($model, 'password_repeat')->widget($passwordClass) ?>
-        <?php endif; ?>
-        <?php if ($dlgXtra & Module::DLG_CAPTCHA): ?>
-            <?= $form->field($model, 'captcha')->widget(Captcha::class, [
-                'captchaAction' => ['default/captcha'],
-                'template' => '<br />{image}{input}',
-                'options' => [ 'class' => 'form-control d-inline-block col-4' ],
-            ]) ?>
-        <?php endif; ?>
+            <?= $this->render('_password', ['model' => $model, 'form' => $form]) ?>
+            <?= $this->render('_captcha', ['model' => $model, 'form' => $form]) ?>
             <div class="form-group mb-4">
                 <?= Html::submitButton(Yii::t('pluto', 'Save'), $viewOptions['button']) ?>
             </div>

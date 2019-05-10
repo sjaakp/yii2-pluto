@@ -36,7 +36,8 @@ $this->registerCss('
         [
             'attribute' => 'name',
             'content' => function($model, $key, $index, $widget)    {
-                return Html::a($model->name, [ 'update', 'id' => $model->id ]);
+                return Yii::$app->user->can('updateUser', $model) ?
+                    Html::a($model->name, [ 'update', 'id' => $model->id ]) : $model->name;
             },
             'format' => 'html',
         ],
@@ -50,11 +51,15 @@ $this->registerCss('
 
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{delete}',
+            'template' => '{update} {delete}',
             'visibleButtons' => [
-            'delete' => function ($model, $key, $index) {   // user can't delete herself
-                    return Yii::$app->user->id != $model->id;
-                }
+                'delete' => function ($model, $key, $index) {
+                        return Yii::$app->user->can('updateUser', $model) && Yii::$app->user->id != $model->id;
+                                                                        // user can't delete herself
+                },
+                'update' => function ($model, $key, $index) {
+                    return Yii::$app->user->can('updateUser', $model);
+                },
             ]
         ],
     ],

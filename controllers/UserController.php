@@ -5,9 +5,7 @@ namespace sjaakp\pluto\controllers;
 use Yii;
 use sjaakp\pluto\models\User;
 use sjaakp\pluto\models\UserSearch;
-use sjaakp\pluto\forms\UserForm;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -51,6 +49,7 @@ class UserController extends Controller
     {
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->sort->defaultOrder = ['name' => SORT_ASC];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -89,11 +88,17 @@ class UserController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findAndCheckModel($id, 'update');
+        if (! $model) return $this->redirect(['index']);
+
         $model->scenario = 'update';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
+            // if error, updated_at may be 'NOW()', which DetailView doesn't understand
+            $model->updated_at = $model->getOldAttribute('updated_at');
         }
 
         return $this->render('update', [
@@ -130,7 +135,8 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findAndCheckModel($id, 'delete');
+        if ($model) $model->delete();
         return $this->redirect(['index']);
     }
 
@@ -144,6 +150,27 @@ class UserController extends Controller
     {
         $vw = $this->module->views[$this->id][$view] ?? $view;
         return parent::render($vw, $params);
+    }
+
+    /**
+     * @param $id
+     * @param $verb
+     * @return User|null
+     * @throws NotFoundHttpException
+     */
+    protected function findAndCheckModel($id, $verb)
+    {
+        $model = $this->findModel($id);
+        if (! Yii::$app->user->can('updateUser', $model))   {
+            Yii::$app->session->setFlash('danger', Yii::t('pluto',
+                'Sorry {username}, you\'re not allowed to {verb} <strong>{goal}</strong>\'s user data.', [
+                    'verb' => Yii::t('pluto', $verb),
+                    'username' => Yii::$app->user->identity->name ?? '',
+                    'goal' => $model->name ?? ''
+                ]));
+            return null;
+        }
+        return $model;
     }
 
     /**

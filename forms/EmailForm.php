@@ -3,6 +3,7 @@ namespace sjaakp\pluto\forms;
 
 use Yii;
 use yii\base\Model;
+use sjaakp\pluto\Module;
 use sjaakp\pluto\models\User;
 
 /**
@@ -12,6 +13,7 @@ class EmailForm extends Model
 {
     public $email;
     public $captcha;
+    public $flags;
 
     public $status = User::STATUS_ACTIVE;
 
@@ -31,8 +33,8 @@ class EmailForm extends Model
                 'message' => Yii::t('pluto', 'There is no user with this email address.')
             ],
 
-            ['captcha', 'required'],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha'],
+            ['captcha', 'required', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
+            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
         ];
     }
 

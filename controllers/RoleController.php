@@ -4,6 +4,7 @@ namespace sjaakp\pluto\controllers;
 
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
@@ -18,6 +19,16 @@ class RoleController extends \yii\web\Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'permissions' => ['manageRoles'],
+                    ],
+                ],
+                'denyCallback' => [ 'sjaakp\pluto\Module', 'accessDenied' ]
+            ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [

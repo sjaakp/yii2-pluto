@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\web\IdentityInterface;
+use yii\helpers\ArrayHelper;
 use sjaakp\pluto\Module;
 
 /**
@@ -26,6 +27,9 @@ use sjaakp\pluto\Module;
  * @property string $deleted_at
  * @property string $lastlogin_at
  * @property integer $login_count
+ * @property string $username [varchar(255)]
+ * @property string $password_reset_token [varchar(255)]
+ * @property int $role [smallint(6)]
  *
  * @method touch($attribute)
  */
@@ -39,8 +43,8 @@ class User extends ActiveRecord implements IdentityInterface
     public $password;
     public $password_repeat;
     public $captcha;
-    public $roles = [];
-    public $singleRole;
+    public $flags;
+    public $roles = []; // role *names*
 
     /**
      * {@inheritdoc}
@@ -97,11 +101,11 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
             ['status', 'required', 'on' => ['create', 'update']],
 
-            ['password_repeat', 'required'],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password'],
+            ['password_repeat', 'required', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
+            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
 
-            ['captcha', 'required'],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha'],
+            ['captcha', 'required', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
+            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
 
             [['singleRole', 'roles'], 'safe']
         ];
@@ -197,8 +201,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Finds user by token
-     *
      * @param string $action
      * @param string $token
      * @param string $status
@@ -235,8 +237,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Validates password
-     *
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
@@ -246,8 +246,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Generates password hash and authentication key; sets them to the model
-     *
      * @param string $password
      * @throws \yii\base\Exception
      */
@@ -262,6 +260,23 @@ class User extends ActiveRecord implements IdentityInterface
     public function generateAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getSingleRole()
+    {
+        if (count($this->roles) > 1) return '<multiple>';
+        return empty($this->roles) ? '' : current($this->roles);
+    }
+
+    /**
+     * @param $role string
+     */
+    public function setSingleRole($role)
+    {
+        $this->roles = [$role];
     }
 
     /**
@@ -339,24 +354,16 @@ class User extends ActiveRecord implements IdentityInterface
         $auth = Yii::$app->authManager;
         $auth->revokeAll($this->id);    // revoke all roles
 
-        /* @var $profile yii\db\BaseActiveRecord */
-        $profile = Yii::$app->profile ?? false;    // delete profile, if any
-        if ($profile)   {
-            $pr = $profile::findOne($this->id);
-            if ($pr) $pr->delete();
+        $prClass = Module::getInstance()->profileClass;
+        if ($prClass)  {    // delete profile, if any
+            /* @var $prClass yii\db\BaseActiveRecord */
+            /* @var $profile yii\db\BaseActiveRecord */
+            $profile = $prClass::findOne($this->id);
+            if ($profile) $profile->delete();
         }
 
         if ($r) $this->afterDelete();
         return $r ? 1 : false;   // the number of Users effected | false
-    }
-
-    /**
-     *
-     */
-    public function init()
-    {
-        parent::init();
-        $this->prepareRoles();
     }
 
     /**
@@ -366,7 +373,13 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function beforeSave($insert)
     {
-        if ($insert) $this->generateAuthKey();
+        if ($insert)    {
+            $this->generateToken();
+            $this->generateAuthKey();
+        }
+        if ($this->status == self::STATUS_BLOCKED && $this->isAttributeChanged('status'))   {
+            $this->blocked_at = new Expression('NOW()');
+        }
         return parent::beforeSave($insert);
     }
 
@@ -378,10 +391,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-
-        if (! Module::getInstance()->multipleRoles && ! empty($this->singleRole)) {
-            $this->roles = [ $this->singleRole ];
-        }
 
         $auth = Yii::$app->authManager;
         $auth->revokeAll($this->id);    // revoke old roles
@@ -407,18 +416,6 @@ class User extends ActiveRecord implements IdentityInterface
         $userRoles = $auth->getRolesByUser($this->id);  // yii\rbacRole[]
         $defaultRoles = $auth->getDefaultRoles();   // string[]
         $this->roles = array_diff(array_keys($userRoles), $defaultRoles);
-
-        $this->prepareRoles();
-    }
-
-    /**
-     *
-     */
-    protected function prepareRoles()
-    {
-        if (! Module::getInstance()->multipleRoles && count($this->roles) == 1) {
-            $this->singleRole =  current($this->roles);
-        }
     }
 
     /**
@@ -437,17 +434,23 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * @return bool
+     * @throws \yii\base\InvalidConfigException
      */
     public function createProfile()
     {
-        $profile = Yii::$app->profile ?? false;
-        if ($profile)  {
-            $pk = current($profile->primaryKey());       // note: name of the primary key, not the value
-            $profile->{$pk} = $this->id;
-            if ($profile->hasAttribute('name')) {
-                $profile->name = $this->name;
+        $prClass = Module::getInstance()->profileClass;
+        if ($prClass)   {
+            if (is_string($prClass)) $prClass = [ 'class' => $prClass ];
+            $cls = ArrayHelper::remove($prClass, 'class');
+            $profile = Yii::createObject($cls, $prClass);
+            if ($profile) {
+                $pk = current($profile->primaryKey());       // name of the primary key, not the value
+                $profile->{$pk} = $this->id;
+                if ($profile->hasAttribute('name')) {
+                    $profile->name = $this->name;
+                }
+                return $profile->save(false);
             }
-            return $profile->save(false);
         }
         return true;
     }
@@ -457,9 +460,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getProfile()
     {
-        /* @var $profile yii\db\BaseActiveRecord */
-        $profile = Yii::$app->profile ?? false;
-        if (! $profile) return null;
-        return $profile::findOne($this->id);
+        /* @var $prClass yii\db\BaseActiveRecord */
+        $prClass = Module::getInstance()->profileClass;
+        if (! $prClass) return null;
+        return $prClass::findOne($this->id);
     }
 }

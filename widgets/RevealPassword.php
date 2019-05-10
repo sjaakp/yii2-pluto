@@ -2,9 +2,10 @@
 
 namespace sjaakp\pluto\widgets;
 
-Use yii\helpers\Html;
+use yii\helpers\Html;
+use yii\widgets\InputWidget;
 
-class RevealPassword extends Password
+class RevealPassword extends InputWidget
 {
     public $js = 'let _pw_gate=true;function _pw_toggle(e){if (_pw_gate){let t=$(e.target);t.prev().attr("type",t.toggleClass("_pw_slash").hasClass("_pw_slash")?"password":"text");}else _pw_gate=true;}
 $("._pw-reveal").hover(_pw_toggle,_pw_toggle).click(function(e){_pw_gate=false;});';
@@ -14,7 +15,7 @@ $("._pw-reveal").hover(_pw_toggle,_pw_toggle).click(function(e){_pw_gate=false;}
 
     public function run()
     {
-        $this->options = [ 'class' => 'form-control _ppw' ];
+        Html::addCssClass($this->options, '_ppw');
         $this->view->registerCss($this->css);
         $this->view->registerJs($this->js);
 

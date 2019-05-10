@@ -42,7 +42,7 @@ $this->breadcrumbs[] = $this->title;
 
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{delete}'
+            'template' => '{update} {delete}'
         ],
     ],
     'formatter' => [

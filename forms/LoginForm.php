@@ -2,9 +2,9 @@
 
 namespace sjaakp\pluto\forms;
 
-use sjaakp\pluto\Module;
 use Yii;
 use yii\base\Model;
+use sjaakp\pluto\Module;
 use sjaakp\pluto\models\User;
 
 /**
@@ -17,6 +17,7 @@ class LoginForm extends Model
     public $password_repeat;
     public $rememberMe = true;
     public $captcha;
+    public $flags;
 
     private $_user;
 
@@ -33,11 +34,11 @@ class LoginForm extends Model
             ['password', 'validatePassword'],
             ['password', 'match', 'pattern' => $mod->passwordRegexp],
 
-            ['password_repeat', 'required'],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password'],
+            ['password_repeat', 'required', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
+            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
 
-            ['captcha', 'required'],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha'],
+            ['captcha', 'required', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
+            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
         ];
     }
 

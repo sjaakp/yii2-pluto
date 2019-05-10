@@ -1,5 +1,6 @@
 <?php
 use softark\duallistbox\DualListbox;
+use sjaakp\pluto\assets\PlutoAsset;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap4\ActiveForm */
@@ -9,12 +10,13 @@ use softark\duallistbox\DualListbox;
 
 /* @link https://github.com/softark/yii2-dual-listbox */
 
-$this->registerAssetBundle('sjaakp\pluto\assets\PlutoAsset');
+PlutoAsset::register($this);
 ?>
 <fieldset class="mb-3">
     <legend><?= $model->getAttributeLabel($attribute) ?></legend>
 <?= $form->field($model, $attribute, [
-    'template' => "{input}\n{hint}\n{error}"
+    'template' => "{input}\n{hint}\n{error}",
+    'hintOptions' => ['class' => 'form-text text-muted text-right']
 ])->widget(DualListbox::class, [
     'items' => $items,
     'options' => [

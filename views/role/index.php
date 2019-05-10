@@ -41,7 +41,7 @@ $this->breadcrumbs[] = $this->title;
 
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{delete}'
+            'template' => '{update} {delete}'
         ],
     ],
     'formatter' => [
@@ -56,4 +56,6 @@ $this->breadcrumbs[] = $this->title;
 ]); ?>
 
 <p><?= Html::a(Yii::t('pluto', 'New Role'), ['create'], $viewOptions['button']) ?>
- <?= Html::a(Yii::t('pluto', 'Permissions'), ['permission/index'], $viewOptions['button']) ?></p>
+ <?= Html::a(Yii::t('pluto', 'Permissions'), ['permission/index'], $viewOptions['button']) ?>
+ <?= Html::a(Yii::t('pluto', 'Conditions'), ['rule/index'], $viewOptions['button']) ?>
+</p>

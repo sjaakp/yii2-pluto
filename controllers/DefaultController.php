@@ -69,10 +69,9 @@ class DefaultController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        /* @var $module Module */
-        $module = $this->module;
+
         $model = new LoginForm([
-            'scenario' => $module->getScenario('login')
+            'flags' => $this->module->getPwFlags('login')
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
@@ -104,9 +103,9 @@ class DefaultController extends Controller
         $model = new User([
             'scenario' => 'signup',
             'status' => User::STATUS_PENDING,
-            'roles' => [$this->module->standardRole]
+            'roles' => [$this->module->standardRole],
+            'flags' => $this->module->getPwFlags('signup')
         ]);
-        $model->generateToken();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             if ($model->sendTokenEmail(Yii::t('pluto', 'Account registration at {appname}', [
@@ -140,7 +139,9 @@ class DefaultController extends Controller
      */
     public function actionForgot()
     {
-        $model = new EmailForm();
+        $model = new EmailForm([
+            'flags' => $this->module->getPwFlags('forgot')
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = User::findByEmail($model->email);
             if ($user)  {
@@ -174,6 +175,7 @@ class DefaultController extends Controller
 
         if ($model)  {
             $model->scenario = 'recover';
+            $model->flags = $this->module->getPwFlags('recover');
 
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $model->removeToken();
@@ -203,7 +205,8 @@ class DefaultController extends Controller
     public function actionResend()
     {
         $model = new EmailForm([
-            'status' => User::STATUS_PENDING
+            'status' => User::STATUS_PENDING,
+            'flags' => $this->module->getPwFlags('resend')
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = User::findByEmail($model->email, User::STATUS_PENDING);
@@ -233,6 +236,8 @@ class DefaultController extends Controller
     {
         $user = $this->getCurrentUser();
         $user->scenario = 'settings';
+        $user->flags = $this->module->getPwFlags('settings');
+
         $req = Yii::$app->request;
         if ($req->isGet) Url::remember($req->referrer);
 
@@ -274,11 +279,14 @@ class DefaultController extends Controller
      */
     public function actionPwChange()
     {
+        $flags = $this->module->getPwFlags('pw-change');
         $user = $this->getCurrentUser();
         $user->scenario = 'pw-change';
+        $user->flags = $flags;
 
         $model = new PwChangeForm([
-            'user' => $user
+            'user' => $user,
+            'flags' => $flags
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -303,6 +311,7 @@ class DefaultController extends Controller
     {
         $model = $this->getCurrentUser();
         $model->scenario = 'delete';
+        $model->flags = $this->module->getPwFlags('delete');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             Yii::$app->user->logout();
@@ -325,6 +334,7 @@ class DefaultController extends Controller
     {
         $model =  $this->getCurrentUser();
         $model->scenario = 'download';
+        $model->flags = $this->module->getPwFlags('download');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $attrs = $model->getAttributes(null, [ 'id', 'auth_key', 'password_hash', 'token', 'status' ]);
@@ -334,6 +344,8 @@ class DefaultController extends Controller
                 $label = $model->getAttributeLabel($key);
                 $csv[] = "$label = $value";
             }
+            $roles = implode(', ', $model->roles);
+            $csv[] = "Role(s) = $roles";
             $appName = Yii::$app->name;
             $now = date('Y-m-d H:i:s');
             $line = str_repeat('=', 32);

@@ -19,20 +19,9 @@ use sjaakp\pluto\models\User;
  */
 class Module extends YiiModule implements BootstrapInterface
 {
-    const DLG_PW_REVEAL = 0b0001;   // dialog has reveal password button
-    const DLG_DOUBLE_PW = 0b0010;   // dialog has double password (user must fill in password twice (doesn't affect 'forgot', 'resend')
-    const DLG_CAPTCHA = 0b0100;     // dialog has captcha field
-
-    /**
-     * @var array
-     *  key: one of the actions ('signup', 'login', 'forgot', 'recover', 'resend', 'pw_change', 'delete'
-     *  key may also be 'all', in which case the value applies to all actions
-     *  value: any combination of above DLG_xxx consts. Consts may be added or or'ed.
-     */
-    public $dialogExtras = [
-        'all' => self::DLG_PW_REVEAL,
-//        'delete' => self::DLG_DOUBLE_PW | self::DLG_CAPTCHA,
-    ];
+    const PW_REVEAL = 0b0001;   // dialog has reveal password button
+    const PW_DOUBLE = 0b0010;   // dialog has double password (user must fill in password twice (doesn't affect 'forgot', 'resend')
+    const PW_CAPTCHA = 0b0100;  // dialog has captcha field
 
     /**
      * @var array options for certain aspects of views
@@ -40,7 +29,7 @@ class Module extends YiiModule implements BootstrapInterface
     public $viewOptions = [
         'row' => [ 'class' => 'row justify-content-center' ],
         'col' => [ 'class' => 'col-md-6 col-lg-5' ],
-        'button' => [ 'class' => 'btn btn-primary' ],
+        'button' => [ 'class' => 'btn btn-success' ],
         'link' => [ 'class' => 'btn btn-sm btn-secondary' ],
     ];
 
@@ -65,8 +54,18 @@ class Module extends YiiModule implements BootstrapInterface
     ];
 
     /**
+     * @var array
+     *  key: one of the actions ('signup', 'login', 'forgot', 'recover', 'resend', 'pw_change', 'delete'
+     *  key may also be 'all', in which case the value applies to all actions
+     *  value: any combination of above PW_xxx consts. Consts may be added or or'ed.
+     */
+    public $passwordFlags = [
+        'all' => self::PW_REVEAL,
+//        'delete' => self::PW_DOUBLE | self::PW_CAPTCHA,
+    ];
+
+    /**
      * Pattern that will be applied for password.
-     * Default pattern does not restrict user and can enter any set of characters.
      *
      * example of pattern :
      * '^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$'
@@ -96,6 +95,11 @@ class Module extends YiiModule implements BootstrapInterface
     public $standardRole = 'visitor';
 
     /**
+     * @var string
+     */
+    public $ruleNamespace = 'app\rbac';
+
+    /**
      * @var int seconds that a token remains valid. Default is six hours.
      */
     public $tokenStamina = 21600;
@@ -111,9 +115,25 @@ class Module extends YiiModule implements BootstrapInterface
     public $multipleRoles = false;
 
     /**
-     * @var
+     * @var string  form class used in dialogs; if null, is set to bootstrap ActiveForm
      */
     public $formClass;
+
+    /**
+     * @var bool    if true, puts the whole site behind a 'fence'
+     */
+    public $fenceMode = false;
+
+    /**
+     * @var string  yii\db\BaseActiveRecord class name; used as profile
+     */
+    public $profileClass;
+
+    /**
+     * @var string  the class name of the identity object associated with the current user
+     * May be changed into a class extended from sjaakp\pluto\models\User
+     */
+    public $identityClass = 'sjaakp\pluto\models\User';
 
     /**
      * @throws InvalidConfigException
@@ -133,12 +153,16 @@ class Module extends YiiModule implements BootstrapInterface
             ];
         }
 
-        $this->formClass = $this->bootstrapNamespace() . '\ActiveForm';
+        if (empty($this->formClass)) $this->formClass = $this->bootstrapNamespace() . '\ActiveForm';
     }
 
-    public function getScenario($action)
+    /**
+     * @param $action
+     * @return int
+     */
+    public function getPwFlags($action)
     {
-        return $this->dialogExtras[$action] ?? Model::SCENARIO_DEFAULT;
+        return ($this->passwordFlags['all'] ?? 0) | ($this->passwordFlags[$action] ?? 0);
     }
 
     /**
@@ -155,27 +179,6 @@ class Module extends YiiModule implements BootstrapInterface
         }
     }
 
-    public static function beforeRequest($event)
-    {
-        /** @link http://stackoverflow.com/questions/25998122/yii2-global-filter-behavior-to-force-user-to-authenticate-first */
-        /** @link https://www.yiiframework.com/doc/guide/2.0/en/concept-configurations#configuration-format */
-/*        'as beforeRequest' => [
-        'class' => 'yii\filters\AccessControl',
-        'rules' => [
-            [
-                'actions' => ['login', 'error'],
-                'allow' => true,
-            ],
-            [
-
-                'allow' => true,
-                'roles' => ['@'],
-            ],
-        ],
-    ],*/
-
-    }
-
     /**
      * @param $rule
      * @param $action
@@ -184,21 +187,38 @@ class Module extends YiiModule implements BootstrapInterface
      */
     public static function accessDenied($rule, $action)
     {
+        return self::denyAccess($action->controller);
+    }
+
+    /**
+     * @param $controller yii\web\Controller
+     * @param null $message string
+     * @param array $messageKey string
+     * @return yii\web\Response
+     * @throws yii\web\ForbiddenHttpException
+     */
+    public static function denyAccess($controller, $message = null, $messageKey = 'danger')
+    {
         $user = Yii::$app->user;
         if ($user !== false && $user->isGuest) {
-            $user->loginRequired();
+            return $user->loginRequired();
         } else {
-            /* @var $ctrl yii\web\Controller */
-            $ctrl = $action->controller;
-            $elmnts = $ctrl->module === Yii::$app ? [] : [ $ctrl->module->id ];
-            $elmnts[] = $ctrl->id;
-            $elmnts[] = $action->id;
-            Yii::$app->session->setFlash('danger', Yii::t('pluto',
-                'Sorry {username}, you\'re not allowed to visit <strong>{route}</strong> on this site.', [
-                    'username' => $user->identity->name ?? '',
+            /* @var $identity User */
+            $identity = $user->identity;
+            if (! $message) {
+                $elmnts = $controller->module === Yii::$app ? [] : [ $controller->module->id ];
+                $elmnts[] = $controller->id;
+                $elmnts[] = $controller->action->id;
+
+                $message = Yii::t('pluto','Sorry {username}, you\'re not allowed to visit <strong>{route}</strong> on this site.', [
+                    'username' => $identity->name ?? '',
                     'route' => implode('/', $elmnts)
-                ]));
-            return $ctrl->goHome();
+                ]);
+            }
+            Yii::$app->session->setFlash($messageKey, $message);
+            $r = $controller->goBack();
+            Yii::$app->user->setReturnUrl(null);
+            return $r;
         }
     }
 
@@ -212,7 +232,6 @@ class Module extends YiiModule implements BootstrapInterface
             $rules = new GroupUrlRule([
                 'prefix' => $this->id,
                 'rules' => [
-//                        '<id:\d+>' => 'profile/show',
                     '<a:(confirm|recover)>/<token:[A-Za-z0-9_-]+>' => 'default/<a>',
                     '<a:[\w\-]+>/<id:\d+>' => 'default/<a>',
                     '<c:[\w\-]+>/<a:[\w\-]+>/<id:[\w\-]+>' => '<c>/<a>',
@@ -223,12 +242,27 @@ class Module extends YiiModule implements BootstrapInterface
             $app->getUrlManager()->addRules([$rules], false);
 
             $app->setComponents([
-                'user' => array_merge([
-                    'identityClass' => 'sjaakp\pluto\models\User',
+                'user' => ArrayHelper::merge($app->components['user'], [
+                    'identityClass' => $this->identityClass,
                     'loginUrl' => [$this->id . '/default/login'],
                     'on beforeLogin' => [$this, 'beforeLogin']
-                ], $app->components['user']),
+                ]),
             ]);
+
+            if ($this->fenceMode)   {
+                $app->on(WebApplication::EVENT_BEFORE_ACTION, function($event) {
+                    $user = Yii::$app->user;
+                    if ($user->isGuest)   {
+                        $action = $event->action->id;
+                        if ($event->action->controller->module->id != $this->id ||
+                            ! in_array($action, ['login', 'error', 'forgot', 'recover']))   {
+                            $event->isValid = false;
+                            return $user->loginRequired();
+                        }
+                    }
+                    return null;
+                });
+            }
         } else {
             /* @var $app ConsoleApplication */
 
@@ -250,7 +284,7 @@ class Module extends YiiModule implements BootstrapInterface
      */
     public function bootstrapNamespace()
     {
-        foreach ([ '4', ''] as $v)  {
+        foreach ([ '4', '3', ''] as $v)  {
             $ns = 'yii/bootstrap' . $v;
             if (strrpos(Yii::getAlias( '@' . $ns, false),'/src') !== false) return str_replace('/', '\\', $ns);
         }

@@ -4,10 +4,14 @@ namespace sjaakp\pluto\models;
 
 use Yii;
 use yii\base\Model;
+use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
 
 class Permission extends Model
 {
+    const EVENT_BEFORE_SAVE = 'beforeSave';
+    const EVENT_BEFORE_DELETE = 'beforeDelete';
+
     public $name;
     public $description;
     public $ruleName;
@@ -15,8 +19,8 @@ class Permission extends Model
     public $createdAt;
     public $updatedAt;
 
-    public $permChildren = [];
-    public $permsAvailable = [];
+    public $permChildren = [];      // names
+    public $permsAvailable = [];    // [ name => name ]
 
     protected $oldName;
 
@@ -50,6 +54,12 @@ class Permission extends Model
      */
     public function save($runValidation = true)
     {
+        $event = new ModelEvent();
+        $this->trigger(self::EVENT_BEFORE_SAVE, $event);
+        if (! $event->isValid)  {
+            return false;
+        }
+
         if ($runValidation && !$this->validate()) {
             return false;
         }
@@ -81,9 +91,13 @@ class Permission extends Model
      */
     public function delete()
     {
-        $auth = Yii::$app->authManager;
-        $perm = $auth->getPermission($this->name);
-        $auth->remove($perm);
+        $event = new ModelEvent();
+        $this->trigger(self::EVENT_BEFORE_DELETE, $event);
+        if ($event->isValid)  {
+            $auth = Yii::$app->authManager;
+            $perm = $auth->getPermission($this->name);
+            $auth->remove($perm);
+        }
     }
 
     /**
@@ -93,6 +107,7 @@ class Permission extends Model
     {
         return [
             [['name', 'description', 'ruleName', 'data' ], 'string'],
+            ['ruleName', 'default', 'value' => null],  // without this, integrity violation with DbManager, nasty!
             ['name', 'validateName'],
             [['createdAt', 'updatedAt'], 'safe'],
             ['permChildren', 'safe']

@@ -4,12 +4,13 @@
 namespace sjaakp\pluto\models;
 
 use Yii;
+use yii\base\ModelEvent;
 use yii\helpers\ArrayHelper;
 
 class Role extends Permission
 {
-    public $roleChildren = [];
-    public $rolesAvailable = [];
+    public $roleChildren = [];      // names
+    public $rolesAvailable = [];    // [ name => name ]
 
     /**
      * @param bool $runValidation
@@ -38,9 +39,13 @@ class Role extends Permission
      */
     public function delete()
     {
-        $auth = Yii::$app->authManager;
-        $role = $auth->getRole($this->name);
-        $auth->remove($role);
+        $event = new ModelEvent();
+        $this->trigger(self::EVENT_BEFORE_DELETE, $event);
+        if ($event->isValid)  {
+            $auth = Yii::$app->authManager;
+            $role = $auth->getRole($this->name);
+            $auth->remove($role);
+        }
     }
 
     /**
