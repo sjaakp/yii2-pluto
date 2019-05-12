@@ -67,10 +67,8 @@ class Module extends YiiModule implements BootstrapInterface
     /**
      * Pattern that will be applied for password.
      *
-     * example of pattern :
+     * example:
      * '^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$'
-     *
-     * This example pattern allow user enter only:
      *
      * ^: anchored to beginning of string
      * \S*: any set of characters
@@ -90,9 +88,14 @@ class Module extends YiiModule implements BootstrapInterface
     public $passwordHint = 'At least 6 characters';
 
     /**
-     * @var string name of Role assigned to new User
+     * @var null|string|array    name(s) of Role(s) assigned to new User
      */
-    public $standardRole = 'visitor';
+    public $defaultRole;
+
+    /**
+     * @var null|string|array    name(s) of Role(s) assigned to first new User
+     */
+    public $firstDefaultRole = 'admin';
 
     /**
      * @var string

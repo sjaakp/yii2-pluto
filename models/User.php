@@ -276,7 +276,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setSingleRole($role)
     {
-        $this->roles = [$role];
+        $this->roles = empty($role) ? [] : [$role];
     }
 
     /**

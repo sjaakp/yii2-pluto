@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use sjaakp\pluto\Module;
-use sjaakp\pluto\widgets\RevealPassword;
+use sjaakp\pluto\widgets\Password;
 
 /* @var $this yii\web\View */
 /* @var $model sjaakp\pluto\forms\PwChangeForm */
@@ -12,9 +12,6 @@ use sjaakp\pluto\widgets\RevealPassword;
 $context = $this->context;
 $module = $context->module;
 $viewOptions = $module->viewOptions;
-$dlgXtra = ($module->dialogExtras['all'] ?? 0) | ($module->dialogExtras[$context->action->id] ?? 0);
-$passwordClass = 'sjaakp\pluto\widgets\\';
-$passwordClass .= ($dlgXtra & Module::PW_REVEAL) ? 'RevealPassword' : 'Password';
 
 $this->title = Yii::t('pluto', 'Change password');
 $this->params['breadcrumbs'][] = $this->title;
@@ -24,15 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <h1><?= Html::encode($this->title) ?></h1>
         <?php $form = $module->formClass::begin();
 if ($model->flags & Module::PW_REVEAL): ?>
-            <?= $form->field($model, 'currentPassword')->widget(RevealPassword::class,
+            <?= $form->field($model, 'currentPassword')->widget(Password::class,
                 [ 'options'  => ['autofocus' => true]]) ?>
             <?= $form->field($model->user, 'password')
                 ->label(Yii::t('pluto', 'New password'))->hint($module->passwordHint)
-                ->widget(RevealPassword::class) ?>
+                ->widget(Password::class) ?>
         <?php if ($model->flags & Module::PW_DOUBLE): ?>
             <?= $form->field($model->user, 'password_repeat')
                 ->label(Yii::t('pluto', 'New password (again)'))
-                ->widget(RevealPassword::class) ?>
+                ->widget(Password::class) ?>
         <?php endif;
 else: ?>
     <?= $form->field($model, 'currentPassword')->passwordInput($options ?? []) ?>

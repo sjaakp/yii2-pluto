@@ -9,6 +9,7 @@ class PlutoController extends Controller
 {
     /**
      * @throws \yii\base\Exception
+     * @throws \Exception
      */
     public function actionIndex()
     {
@@ -57,11 +58,6 @@ class PlutoController extends Controller
         $auth->addChild($permissions['updateCreatedItem'], $permissions['updateItem']);
 
         echo "Permissions set\n";
-
-        // add Roles and give Permissions
-        $visitor = $auth->createRole('visitor');
-        $visitor->description = 'Has no Permissions (apart from being authenticated)';
-        $auth->add($visitor);
 
         $support = $auth->createRole('support');
         $support->description = 'Can manage user data, but not those of \'admin\'';

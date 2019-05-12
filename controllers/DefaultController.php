@@ -14,7 +14,6 @@ use sjaakp\pluto\forms\LoginForm;
 use sjaakp\pluto\forms\EmailForm;
 use sjaakp\pluto\forms\PwChangeForm;
 
-
 /**
  */
 class DefaultController extends Controller
@@ -70,8 +69,11 @@ class DefaultController extends Controller
             return $this->goHome();
         }
 
+        /* @var $module Module */
+        $module = $this->module;
+
         $model = new LoginForm([
-            'flags' => $this->module->getPwFlags('login')
+            'flags' => $module->getPwFlags('login')
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
@@ -100,11 +102,18 @@ class DefaultController extends Controller
      */
     public function actionSignup()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
+        $roles = User::find()->count() > 0 ? $module->defaultRole : ($module->firstDefaultRole ?? $module->defaultRole);
+        if (empty($roles)) $roles = [];
+        if (is_string($roles)) $roles = [$roles];
+
         $model = new User([
             'scenario' => 'signup',
             'status' => User::STATUS_PENDING,
-            'roles' => [$this->module->standardRole],
-            'flags' => $this->module->getPwFlags('signup')
+            'roles' => $roles,
+            'flags' => $module->getPwFlags('signup')
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
@@ -139,8 +148,11 @@ class DefaultController extends Controller
      */
     public function actionForgot()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
         $model = new EmailForm([
-            'flags' => $this->module->getPwFlags('forgot')
+            'flags' => $module->getPwFlags('forgot')
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = User::findByEmail($model->email);
@@ -171,11 +183,14 @@ class DefaultController extends Controller
      */
     public function actionRecover($token)
     {
+        /* @var $module Module */
+        $module = $this->module;
+
         $model = User::findByToken($token);
 
         if ($model)  {
             $model->scenario = 'recover';
-            $model->flags = $this->module->getPwFlags('recover');
+            $model->flags = $module->getPwFlags('recover');
 
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $model->removeToken();
@@ -204,9 +219,12 @@ class DefaultController extends Controller
      */
     public function actionResend()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
         $model = new EmailForm([
             'status' => User::STATUS_PENDING,
-            'flags' => $this->module->getPwFlags('resend')
+            'flags' => $module->getPwFlags('resend')
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = User::findByEmail($model->email, User::STATUS_PENDING);
@@ -234,9 +252,12 @@ class DefaultController extends Controller
      */
     public function actionSettings()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
         $user = $this->getCurrentUser();
         $user->scenario = 'settings';
-        $user->flags = $this->module->getPwFlags('settings');
+        $user->flags = $module->getPwFlags('settings');
 
         $req = Yii::$app->request;
         if ($req->isGet) Url::remember($req->referrer);
@@ -279,7 +300,10 @@ class DefaultController extends Controller
      */
     public function actionPwChange()
     {
-        $flags = $this->module->getPwFlags('pw-change');
+        /* @var $module Module */
+        $module = $this->module;
+
+        $flags = $module->getPwFlags('pw-change');
         $user = $this->getCurrentUser();
         $user->scenario = 'pw-change';
         $user->flags = $flags;
@@ -309,9 +333,12 @@ class DefaultController extends Controller
      */
     public function actionDelete()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
         $model = $this->getCurrentUser();
         $model->scenario = 'delete';
-        $model->flags = $this->module->getPwFlags('delete');
+        $model->flags = $module->getPwFlags('delete');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             Yii::$app->user->logout();
@@ -332,9 +359,12 @@ class DefaultController extends Controller
      */
     public function actionDownload()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
         $model =  $this->getCurrentUser();
         $model->scenario = 'download';
-        $model->flags = $this->module->getPwFlags('download');
+        $model->flags = $module->getPwFlags('download');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $attrs = $model->getAttributes(null, [ 'id', 'auth_key', 'password_hash', 'token', 'status' ]);

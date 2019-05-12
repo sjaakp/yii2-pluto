@@ -2,6 +2,7 @@
 
 namespace sjaakp\pluto\controllers;
 
+use sjaakp\pluto\Module;
 use Yii;
 use sjaakp\pluto\models\User;
 use sjaakp\pluto\models\UserSearch;
@@ -64,10 +65,16 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
+        /* @var $module Module */
+        $module = $this->module;
+
+        $roles = $module->defaultRole;
+        if (empty($roles)) $roles = [];
+        if (is_string($roles)) $roles = [$roles];
         $model = new User([
             'scenario' => 'create',
             'status' => User::STATUS_ACTIVE,
-            'roles' => [$this->module->standardRole]
+            'roles' => $roles
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
