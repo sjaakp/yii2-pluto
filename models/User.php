@@ -1,4 +1,16 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
+
 namespace sjaakp\pluto\models;
 
 use Yii;
@@ -35,14 +47,14 @@ use sjaakp\pluto\Module;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    use Captcha, Password;
+
     const STATUS_DELETED = 0;
     const STATUS_BLOCKED = 1;
     const STATUS_PENDING = 2;
     const STATUS_ACTIVE = 3;
 
     public $password;
-    public $password_repeat;
-    public $captcha;
     public $flags;
     public $roles = []; // role *names*
 
@@ -74,41 +86,37 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $mod = Module::getInstance();
 
-        return [
+        $r = ArrayHelper::merge([
             ['name', 'trim'],
             ['name', 'required'],
-            ['name', 'unique', 'targetClass' => '\sjaakp\pluto\models\User', 'message' => Yii::t('pluto', 'This name has already been taken.')],
+            ['name', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
+                'message' => Yii::t('pluto', 'This name has already been taken.')],
             ['name', 'string', 'min' => 2, 'max' => 60],
 
             ['email', 'trim'],
             ['email', 'required', 'except' => 'delete'],
             ['email', 'email'],
             ['email', 'string', 'max' => 128],
-            ['email', 'unique', 'targetClass' => '\sjaakp\pluto\models\User', 'message' => Yii::t('pluto', 'This email address has already been taken.')],
+            ['email', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
+                'message' => Yii::t('pluto', 'This email address has already been taken.')],
 
-            ['password', 'required', 'on' => ['create', 'signup', 'recover', 'pw-change']],
-            ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', 'signup', 'recover', 'pw-change']],
-            ['password', function($attribute, $params, $validator) {
-                $this->encryptPassword($this->$attribute);
-            }, 'on' => ['create', 'update', 'signup', 'recover', 'pw-change']],
-            ['password', function($attribute, $params, $validator) {
+            ['password', 'required', 'on' => ['create', 'new-pw']],
+            ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', 'new_pw']],
+            ['password', 'encryptPassword' , 'on' => ['create', 'update', 'new-pw']],
+            ['password', 'validatePassword', 'on' => ['settings', 'delete']],
+/*            ['password', function($attribute, $params, $validator) {
                 if (! $this->validatePassword($this->$attribute))   {
                     $this->addError($attribute, Yii::t('pluto', Yii::t('pluto', 'Incorrect password')));
                 }
-            }, 'on' => ['settings', 'download', 'delete']],
+            }, 'on' => ['settings', 'download', 'delete']],*/
 
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
             ['status', 'required', 'on' => ['create', 'update']],
 
-            ['password_repeat', 'required', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
-
-            ['captcha', 'required', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
-
             [['singleRole', 'roles'], 'safe']
-        ];
+        ], $this->captchaRules(), $this->passwordRules());
+        return $r;
     }
 
     /**
@@ -121,7 +129,7 @@ class User extends ActiveRecord implements IdentityInterface
             'email' => Yii::t('pluto', 'Email'),
             'password' => Yii::t('pluto', 'Password'),
             'password_repeat' => Yii::t('pluto', 'Password (again)'),
-            'captcha' => Yii::t('pluto', 'I am not a robot'),
+            'captcha' => Yii::t('pluto', 'Verify'),
             'statusText' => Yii::t('pluto', 'Status'),
             'singleRole' => Yii::t('pluto', 'Role'),
             'created_at' => Yii::t('pluto', 'Created at'),
@@ -240,7 +248,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)
+    public function validatePassword($password, $params)
     {
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
@@ -249,7 +257,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $password
      * @throws \yii\base\Exception
      */
-    public function encryptPassword($password)
+    public function encryptPassword($password, $params)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }

@@ -1,22 +1,36 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 namespace sjaakp\pluto\forms;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 use sjaakp\pluto\Module;
 use sjaakp\pluto\models\User;
+use sjaakp\pluto\models\Captcha;
+use sjaakp\pluto\models\Password;
 
 /**
  * Login form
  */
 class LoginForm extends Model
 {
+    use Captcha, Password;
+
     public $name;
     public $password;
-    public $password_repeat;
     public $rememberMe = true;
-    public $captcha;
     public $flags;
 
     private $_user;
@@ -27,19 +41,13 @@ class LoginForm extends Model
     public function rules()
     {
         $mod = Module::getInstance();
-        return [
+        return ArrayHelper::merge([
             [['name', 'password'], 'required'],
             ['rememberMe', 'boolean'],
 
             ['password', 'validatePassword'],
             ['password', 'match', 'pattern' => $mod->passwordRegexp],
-
-            ['password_repeat', 'required', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'when' => function($model) { return $model->flags & Module::PW_DOUBLE; }],
-
-            ['captcha', 'required', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
-        ];
+        ], $this->captchaRules(), $this->passwordRules());
     }
 
     /**
@@ -67,7 +75,7 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (!$user || !$user->validatePassword($this->password)) {
+            if (!$user || !$user->validatePassword($this->password, $params)) {
                 $this->addError($attribute, Yii::t('pluto', 'Incorrect name or password.'));
             }
         }

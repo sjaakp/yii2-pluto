@@ -1,18 +1,32 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
+
 namespace sjaakp\pluto\forms;
 
 use Yii;
 use yii\base\Model;
-use sjaakp\pluto\Module;
+use yii\helpers\ArrayHelper;
 use sjaakp\pluto\models\User;
+use sjaakp\pluto\models\Captcha;
 
 /**
  * Password recover request form
  */
 class EmailForm extends Model
 {
+    use Captcha;
+
     public $email;
-    public $captcha;
     public $flags;
 
     public $status = User::STATUS_ACTIVE;
@@ -22,7 +36,7 @@ class EmailForm extends Model
      */
     public function rules()
     {
-        return [
+        return ArrayHelper::merge([
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
@@ -32,10 +46,7 @@ class EmailForm extends Model
                 'filter' => ['status' => $this->status],
                 'message' => Yii::t('pluto', 'There is no user with this email address.')
             ],
-
-            ['captcha', 'required', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha', 'when' => function($model) { return $model->flags & Module::PW_CAPTCHA; }],
-        ];
+        ], $this->captchaRules());
     }
 
     /**

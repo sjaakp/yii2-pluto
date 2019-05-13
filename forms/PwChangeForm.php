@@ -1,13 +1,22 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
+
 namespace sjaakp\pluto\forms;
 
 use Yii;
 use yii\base\Model;
 use sjaakp\pluto\models\User;
 
-/**
- * Password recover request form
- */
 class PwChangeForm extends Model
 {
     /* @var $user User */
@@ -34,7 +43,7 @@ class PwChangeForm extends Model
      */
     public function validatePassword($attribute, $params)
     {
-        $r = $this->user->validatePassword($this->$attribute);
+        $r = $this->user->validatePassword($this->$attribute, null);
         if (! $r) {
             $this->addError($attribute, Yii::t('pluto', 'Incorrect password.'));
         }

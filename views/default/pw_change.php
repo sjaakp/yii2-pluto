@@ -1,7 +1,17 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 use yii\helpers\Html;
-use sjaakp\pluto\Module;
 use sjaakp\pluto\widgets\Password;
 
 /* @var $this yii\web\View */
@@ -20,13 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::beginTag('div', $viewOptions['col']) ?>
         <h1><?= Html::encode($this->title) ?></h1>
         <?php $form = $module->formClass::begin();
-if ($model->flags & Module::PW_REVEAL): ?>
+if (in_array('reveal', $model->flags)): ?>
             <?= $form->field($model, 'currentPassword')->widget(Password::class,
                 [ 'options'  => ['autofocus' => true]]) ?>
             <?= $form->field($model->user, 'password')
                 ->label(Yii::t('pluto', 'New password'))->hint($module->passwordHint)
                 ->widget(Password::class) ?>
-        <?php if ($model->flags & Module::PW_DOUBLE): ?>
+        <?php if (in_array('double', $model->flags)): ?>
             <?= $form->field($model->user, 'password_repeat')
                 ->label(Yii::t('pluto', 'New password (again)'))
                 ->widget(Password::class) ?>
@@ -36,7 +46,7 @@ else: ?>
     <?= $form->field($model->user, 'password')
         ->label(Yii::t('pluto', 'New password'))->hint($module->passwordHint)
         ->passwordInput() ?>
-    <?php if ($model->flags & Module::PW_DOUBLE): ?>
+    <?php if (in_array('double', $model->flags)): ?>
         <?= $form->field($model->user, 'password_repeat')
             ->label(Yii::t('pluto', 'New password (again)'))
             ->passwordInput() ?>

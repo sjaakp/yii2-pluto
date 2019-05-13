@@ -5,14 +5,14 @@ yii2-pluto
 **Pluto** is a complete user management module for the [Yii 2.0](https://www.yiiframework.com/ "Yii") PHP Framework.
 
 It manages log in and log out of users, sign up, email-confirmation, blocking and assigning roles.
-Users can change their email-address, forget their password. 
+Users can change their email-address, ask for a reset of their password. 
 The site administrator can define roles and permissions and assign permissions to roles. 
 
 A demonstration of **Pluto** is [here](https://demo.sjaakpriester.nl).
 
 ## Prerequisites ##
 
-**Pluto** relies on [Role-Based Access Control](https://www.yiiframework.com/doc/guide/2.0/en/security-authorization#rbac "Yii2")
+[**Pluto**](#pluto) relies on [Role-Based Access Control](https://www.yiiframework.com/doc/guide/2.0/en/security-authorization#rbac "Yii2")
  (RBAC). Therefore, the [`authManager`](https://www.yiiframework.com/doc/api/2.0/yii-base-application#$authManager-detail "Yii2")
  application component has to be configured. **Pluto** works with Yii's PhpManager as well as 
  with the DbManager.
@@ -185,19 +185,19 @@ The options (all are optional) are:
 
  - **viewOptions** `array` CSS options for certain aspects of **Pluto**'s views, with the following
     key-value pairs:
-    - `'row'` Options for the outer 'row'-div. Default: `[ 'class' => 'row justify-content-center' ]`.
+    - `'row'` Options for the outer 'row'-div. Default value: `[ 'class' => 'row justify-content-center' ]`.
     - `'col'` Likewise for the inner 'col'-div. Default: `[ 'class' => 'col-md-6 col-lg-5' ]`.
     - `'button'` Options for the view's main button. Default: `[ 'class' => 'btn btn-success' ]`.
     - `'link'` Options for the secondary links. Default: `[ 'class' => 'btn btn-sm btn-secondary' ]`.            
- - **views** `array` See below. Default: `[]`.
+ - **views** `array` See [below](#override-view-files). Default: `[]`.
  - **mailOptions** `array` Options for the [app mailer](https://www.yiiframework.com/doc/api/2.0/yii-mail-basemailer "Yii2").
     Default: see source.
  - **passwordFlags** `array` Options for the password input. Keys: any of the action id's (like
-    'login' or 'forgot'), or `'all'` (meaning, well, all of the actions). Values: any combination
-    (or'ed or added) of the following flags. Default: `[ 'all' => self::PW_REVEAL ]`.
-    - `PW_REVEAL` Password input has a small 'reveal'-button.
-    - `PW_DOUBLE` User must fill in password twice (doesn't affect `'forgot'`, `'resend'`).
-    - `PW_CAPTCHA` Dialog has [captcha field](https://www.yiiframework.com/doc/api/2.0/yii-captcha-captcha "Yii2").
+    'login' or 'forgot'), or `'all'` (meaning, well, all of the actions). Values: `string` or
+     `array` of the following flags. Default: `[ 'all' => 'reveal' ]`.
+    - `'reveal'` Password input has a small 'reveal'-button.
+    - `'double'` User must fill in password twice (doesn't affect `'forgot'`, `'resend'`).
+    - `'captcha'` Dialog has [captcha field](#captcha).
  - **passwordRegexp** `string` [Regular expression](https://www.php.net/manual/en/reference.pcre.pattern.syntax.php "PHP")
    against which the password is matched. Complex example:
   `'^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$'` (meaning: at least 8 characters,
@@ -205,15 +205,15 @@ The options (all are optional) are:
    use a site like [Live Regex](https://www.phpliveregex.com/). Default: `'/^\S*(?=\S{6,})\S*$/'`.
  - **passwordHint** `string` Textual representation of the above. Default: `'At least 6 characters'`.
  - **defaultRole** `null|string|array` Role(s) assigned to new users. Default: `null`.
- - **firstDefaultRole** `null|string|array` Role(s) assigned to the *first* new user. Default: `'admin'`.
- - **ruleNamespace** `string` Namespace for Rule-classes (Conditions). Default: `'app\rbac'` 
+ - **firstDefaultRole** `null|string|array` Role(s) assigned to the [*first*](#sign-up-the-first-admin) new user. Default: `'admin'`.
+ - **ruleNamespace** `string` Namespace for [Rule-classes](#roles-permissions-and-all-that) (Conditions). Default: `'app\rbac'` 
  - **tokenStamina** `integer` Duration of the valid state of a sent email-token. Default: `21600` (six hours).
  - **loginStamina** `integer` Duration of 'Remember me'. Default: `2592000` (thirty days).
  - **formClass** `null|string` Yii2 class used for forms. If `null`, this ia set to `ActiveForm`
       in the 'bootstrap' namespace. Default: `null`
  - **multipleRoles** `boolean` Whether more than one role can be assigned to a user. In my 
       opinion this is generally a very bad idea. Therefore, default: `false`. 
- - **profileClass** `null|string|array` Name of the class used as profile. Can also be a configuration array.
+ - **profileClass** `null|string|array` Name of the class used as [profile](#profile). Can also be a configuration array.
       Default: `null`.
  - **identityClass** `string` Class name of the identity object associated with the current user.
       May be changed into a class extended from `sjaakp\pluto\models\User`. 
@@ -246,7 +246,7 @@ With this setup, **Pluto** will automatically create a Profile for each register
 
 For the uninitiated, Roles and Permissions can be daunting. The
  [Authorization chapter of the Yii-guide](https://www.yiiframework.com/doc/guide/2.0/en/security-authorization#rbac "Yii2")
- can offer some help. Basically, **Roles** are assigned to **Users**, and **Permissions** are used
+ offers some help. Basically, **Roles** are assigned to **Users**, and **Permissions** are used
  to structure the site. One or more **Permissions** are assigned to each **Role**.
  
 Both **Roles** and **Permissions** are subject to **Conditions** (Yii2 calls these 
@@ -265,7 +265,15 @@ With the default set-up, **Pluto** automatically assigns the 'admin' Role to the
 who signs up. If afterwards you come into a situation without a registered 'admin', there is 
 no possibility to manage Roles. There are several solutions to this puzzle. One is: *temporarely*
 set **Pluto**'s `defaultRole` to `'admin'`. The importance of *temporarely* can't be stretched
-enough. You'll *never* want this setting in a live site. 
+enough. You'll *never* want this setting in a live site.
+
+## Captcha ##
+
+**Pluto** supports Yii2's standard [Captcha](https://www.yiiframework.com/doc/api/2.0/yii-captcha-captcha "Yii2"), as well as
+  Google's [reCaptcha](https://developers.google.com/recaptcha/ "Google") v2 ('I am not a robot'). A captcha-challenge
+  will show up in the dialog when one of the **passwordFlags** is `'captcha'`. 
+  If [himiklab/yii2-recaptcha-widget](https://github.com/himiklab/yii2-recaptcha-widget "GitHub")
+  is installed on the site, it will be Google's reCaptcha v2, otherwise Yii2's standard captcha.
 
 ## Internationalization ##
 
@@ -281,8 +289,8 @@ You can override **Pluto**'s translations by setting the application's
     'components' => [
         // ... other components ...     
         'i18n' => [
-             // ... other translations ...
              'translations' => [
+                  // ... other translations ...
                  'pluto' => [    // override pluto's standard messages
                      'class' => 'yii\i18n\PhpMessageSource',
                      'basePath' => '@app/messages',  // this is a defaults

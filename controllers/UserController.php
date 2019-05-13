@@ -1,4 +1,15 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 namespace sjaakp\pluto\controllers;
 
@@ -95,7 +106,7 @@ class UserController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findAndCheckModel($id, 'update');
+        $model = $this->findAndCheckModel($id, Yii::t('pluto', 'update'));
         if (! $model) return $this->redirect(['index']);
 
         $model->scenario = 'update';
@@ -142,7 +153,7 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $model = $this->findAndCheckModel($id, 'delete');
+        $model = $this->findAndCheckModel($id, Yii::t('pluto', 'delete'));
         if ($model) $model->delete();
         return $this->redirect(['index']);
     }
@@ -171,7 +182,7 @@ class UserController extends Controller
         if (! Yii::$app->user->can('updateUser', $model))   {
             Yii::$app->session->setFlash('danger', Yii::t('pluto',
                 'Sorry {username}, you\'re not allowed to {verb} <strong>{goal}</strong>\'s user data.', [
-                    'verb' => Yii::t('pluto', $verb),
+                    'verb' => $verb,
                     'username' => Yii::$app->user->identity->name ?? '',
                     'goal' => $model->name ?? ''
                 ]));

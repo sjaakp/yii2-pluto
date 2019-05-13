@@ -1,4 +1,15 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 namespace sjaakp\pluto\controllers;
 
@@ -52,13 +63,6 @@ class DefaultController extends Controller
             ],
         ];
     }
-    /**
-     * @return string
-     */
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
 
     /**
      * @return mixed
@@ -110,7 +114,7 @@ class DefaultController extends Controller
         if (is_string($roles)) $roles = [$roles];
 
         $model = new User([
-            'scenario' => 'signup',
+            'scenario' => 'new-pw',
             'status' => User::STATUS_PENDING,
             'roles' => $roles,
             'flags' => $module->getPwFlags('signup')
@@ -189,7 +193,7 @@ class DefaultController extends Controller
         $model = User::findByToken($token);
 
         if ($model)  {
-            $model->scenario = 'recover';
+            $model->scenario = 'new-pw';
             $model->flags = $module->getPwFlags('recover');
 
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -305,7 +309,7 @@ class DefaultController extends Controller
 
         $flags = $module->getPwFlags('pw-change');
         $user = $this->getCurrentUser();
-        $user->scenario = 'pw-change';
+        $user->scenario = 'new-pw';
         $user->flags = $flags;
 
         $model = new PwChangeForm([
@@ -363,7 +367,7 @@ class DefaultController extends Controller
         $module = $this->module;
 
         $model =  $this->getCurrentUser();
-        $model->scenario = 'download';
+        $model->scenario = 'settings';
         $model->flags = $module->getPwFlags('download');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {

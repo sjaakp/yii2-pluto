@@ -1,4 +1,15 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 namespace sjaakp\pluto;
 
@@ -10,7 +21,6 @@ use yii\console\Application as ConsoleApplication;
 use yii\web\Application as WebApplication;
 use yii\web\GroupUrlRule;
 use yii\web\UserEvent;
-use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use sjaakp\pluto\models\User;
 
@@ -19,10 +29,6 @@ use sjaakp\pluto\models\User;
  */
 class Module extends YiiModule implements BootstrapInterface
 {
-    const PW_REVEAL = 0b0001;   // dialog has reveal password button
-    const PW_DOUBLE = 0b0010;   // dialog has double password (user must fill in password twice (doesn't affect 'forgot', 'resend')
-    const PW_CAPTCHA = 0b0100;  // dialog has captcha field
-
     /**
      * @var array options for certain aspects of views
      */
@@ -57,11 +63,11 @@ class Module extends YiiModule implements BootstrapInterface
      * @var array
      *  key: one of the actions ('signup', 'login', 'forgot', 'recover', 'resend', 'pw_change', 'delete'
      *  key may also be 'all', in which case the value applies to all actions
-     *  value: any combination of above PW_xxx consts. Consts may be added or or'ed.
+     *  value: string|array of the flags 'reveal', 'double', 'captcha'
      */
     public $passwordFlags = [
-        'all' => self::PW_REVEAL,
-//        'delete' => self::PW_DOUBLE | self::PW_CAPTCHA,
+        'all' => 'reveal',
+//        'delete' => ['double', 'captcha']
     ];
 
     /**
@@ -165,7 +171,19 @@ class Module extends YiiModule implements BootstrapInterface
      */
     public function getPwFlags($action)
     {
-        return ($this->passwordFlags['all'] ?? 0) | ($this->passwordFlags[$action] ?? 0);
+        $actionFlags = $this->passwordFlags[$action] ?? [];
+        if (is_string($actionFlags)) $actionFlags = empty($actionFlags) ? [] : [$actionFlags];
+        
+        $allFlags = $this->passwordFlags['all'] ?? [];
+        if (is_string($allFlags)) $allFlags = empty($allFlags) ? [] : [$allFlags];
+
+        $flags = array_merge($actionFlags, $allFlags);
+        $captcha = array_search('captcha', $flags);
+        if ($captcha !== false && Yii::$app->reCaptcha) {
+            unset($flags[$captcha]);
+            $flags[] = 'reCaptcha';
+        }
+        return $flags;
     }
 
     /**
