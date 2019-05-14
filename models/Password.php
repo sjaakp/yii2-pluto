@@ -23,9 +23,9 @@ trait Password
 
     public function passwordRules()
     {
-        return [
-            ['password_repeat', 'required', 'when' => function($model) { return in_array('double', $model->flags); }],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password', 'when' => function($model) { return in_array('double', $model->flags); }],
-        ];
+        return in_array('double', $this->flags) ? [
+            ['password_repeat', 'required'],
+            ['password_repeat', 'compare', 'compareAttribute' => 'password'],
+        ] : [];
     }
 }

@@ -1,4 +1,15 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -80,5 +91,5 @@ $this->registerCss('
 
 <p><?= Html::a(Yii::t('pluto', 'New User'), ['create'], $viewOptions['button']) ?>
 <?php if (Yii::$app->user->can('manageRoles')): ?>
-    <?= Html::a(Yii::t('pluto', 'Roles'), ['role/index'], $viewOptions['button']) ?>
+    <?= Html::a(Yii::t('pluto', 'Roles'), ['role/index'], $viewOptions['link']) ?>
 <?php endif; ?></p>

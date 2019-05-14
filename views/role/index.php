@@ -1,4 +1,15 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -56,6 +67,6 @@ $this->breadcrumbs[] = $this->title;
 ]); ?>
 
 <p><?= Html::a(Yii::t('pluto', 'New Role'), ['create'], $viewOptions['button']) ?>
- <?= Html::a(Yii::t('pluto', 'Permissions'), ['permission/index'], $viewOptions['button']) ?>
- <?= Html::a(Yii::t('pluto', 'Conditions'), ['rule/index'], $viewOptions['button']) ?>
+ <?= Html::a(Yii::t('pluto', 'Permissions'), ['permission/index'], $viewOptions['link']) ?>
+ <?= Html::a(Yii::t('pluto', 'Conditions'), ['rule/index'], $viewOptions['link']) ?>
 </p>

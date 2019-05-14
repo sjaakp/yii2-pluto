@@ -26,16 +26,16 @@ trait Captcha
 
     public function captchaRules()
     {
-        return [
-            ['captcha', 'required', 'when' => function($model) { return in_array('captcha', $model->flags); }],
-            ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha',
-                'when' => function($model) { return in_array('captcha', $model->flags); }
-            ],
+        $r = [];
+        if (in_array('captcha', $this->flags))  {
+            $r[] = ['captcha', 'required'];
+            $r[] = ['captcha', 'captcha', 'captchaAction' => Yii::$app->controller->module->id . '/default/captcha'];
+        }
+        else if (in_array('reCaptcha', $this->flags))   {
+            $r[] = ['reCaptcha', \himiklab\yii2\recaptcha\ReCaptchaValidator2::class,
+                'uncheckedMessage' => Yii::t('pluto', 'Please confirm that you are not a bot.')];
+        }
 
-            [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator2::class,
-                'uncheckedMessage' => Yii::t('pluto', 'Please confirm that you are not a bot.'),
-                'when' => function($model) { return in_array('reCaptcha', $model->flags); },
-            ],
-        ];
+        return $r;
     }
 }

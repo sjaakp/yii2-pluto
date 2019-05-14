@@ -17,7 +17,6 @@ use sjaakp\pluto\Module;
 use Yii;
 use sjaakp\pluto\models\User;
 use sjaakp\pluto\models\UserSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -156,18 +155,6 @@ class UserController extends Controller
         $model = $this->findAndCheckModel($id, Yii::t('pluto', 'delete'));
         if ($model) $model->delete();
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Give user a chance to override view
-     * @param string $view
-     * @param array $params
-     * @return string
-     */
-    public function render($view, $params = [])
-    {
-        $vw = $this->module->views[$this->id][$view] ?? $view;
-        return parent::render($vw, $params);
     }
 
     /**

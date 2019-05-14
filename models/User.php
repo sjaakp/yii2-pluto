@@ -55,7 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 3;
 
     public $password;
-    public $flags;
+    public $flags = [];
     public $roles = []; // role *names*
 
     /**
@@ -103,12 +103,12 @@ class User extends ActiveRecord implements IdentityInterface
             ['password', 'required', 'on' => ['create', 'new-pw']],
             ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', 'new_pw']],
             ['password', 'encryptPassword' , 'on' => ['create', 'update', 'new-pw']],
-            ['password', 'validatePassword', 'on' => ['settings', 'delete']],
-/*            ['password', function($attribute, $params, $validator) {
-                if (! $this->validatePassword($this->$attribute))   {
+//            ['password', 'validatePassword', 'on' => ['settings', 'delete']],
+            ['password', function($attribute, $params, $validator) {
+                if (! $this->validatePassword($this->$attribute, $params))   {
                     $this->addError($attribute, Yii::t('pluto', Yii::t('pluto', 'Incorrect password')));
                 }
-            }, 'on' => ['settings', 'download', 'delete']],*/
+            }, 'on' => ['settings', 'delete']],
 
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
@@ -257,9 +257,9 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $password
      * @throws \yii\base\Exception
      */
-    public function encryptPassword($password, $params)
+    public function encryptPassword($attribute, $params)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = Yii::$app->security->generatePasswordHash($this->$attribute);
     }
 
     /**
@@ -382,7 +382,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if ($insert)    {
-            $this->generateToken();
+//            $this->generateToken();
             $this->generateAuthKey();
         }
         if ($this->status == self::STATUS_BLOCKED && $this->isAttributeChanged('status'))   {

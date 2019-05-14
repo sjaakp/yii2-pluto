@@ -1,4 +1,15 @@
 <?php
+/**
+ * yii2-pluto
+ * ----------
+ * User management module for Yii2 framework
+ * Version 1.0.0
+ * Copyright (c) 2019
+ * Sjaak Priester, Amsterdam
+ * MIT License
+ * https://github.com/sjaakp/yii2-pluto
+ * https://sjaakpriester.nl
+ */
 
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -40,7 +51,7 @@ $this->breadcrumbs[] = $this->title;
         ],
         'name',
         [
-            'label' => Yii::t('pluto', 'Classname'),
+            'label' => Yii::t('pluto', 'Class'),
             'content' => function($model, $key, $index, $widget)    {
                 return get_class($model);
             },

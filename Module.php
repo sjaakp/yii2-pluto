@@ -179,7 +179,7 @@ class Module extends YiiModule implements BootstrapInterface
 
         $flags = array_merge($actionFlags, $allFlags);
         $captcha = array_search('captcha', $flags);
-        if ($captcha !== false && Yii::$app->reCaptcha) {
+        if ($captcha !== false && (Yii::$app->reCaptcha ?? false)) {
             unset($flags[$captcha]);
             $flags[] = 'reCaptcha';
         }

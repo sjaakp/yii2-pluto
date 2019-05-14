@@ -29,7 +29,6 @@ class PwChangeForm extends Model
      */
     public function rules()
     {
-        $mod = Yii::$app->controller->module;
         return [
             ['currentPassword', 'required'],
             ['currentPassword', 'validatePassword'],

@@ -184,7 +184,7 @@ The **Pluto** module has an extensive range of options. They are set in the appl
 The options (all are optional) are:
 
  - **viewOptions** `array` CSS options for certain aspects of **Pluto**'s views, with the following
-    key-value pairs:
+    key-value pairs. Optimized for Bootstrap4.
     - `'row'` Options for the outer 'row'-div. Default value: `[ 'class' => 'row justify-content-center' ]`.
     - `'col'` Likewise for the inner 'col'-div. Default: `[ 'class' => 'col-md-6 col-lg-5' ]`.
     - `'button'` Options for the view's main button. Default: `[ 'class' => 'btn btn-success' ]`.
@@ -209,7 +209,7 @@ The options (all are optional) are:
  - **ruleNamespace** `string` Namespace for [Rule-classes](#roles-permissions-and-all-that) (Conditions). Default: `'app\rbac'` 
  - **tokenStamina** `integer` Duration of the valid state of a sent email-token. Default: `21600` (six hours).
  - **loginStamina** `integer` Duration of 'Remember me'. Default: `2592000` (thirty days).
- - **formClass** `null|string` Yii2 class used for forms. If `null`, this ia set to `ActiveForm`
+ - **formClass** `null|string` Yii2 class used for forms. If `null`, this is set to `ActiveForm`
       in the 'bootstrap' namespace. Default: `null`
  - **multipleRoles** `boolean` Whether more than one role can be assigned to a user. In my 
       opinion this is generally a very bad idea. Therefore, default: `false`. 
@@ -223,7 +223,7 @@ The options (all are optional) are:
 ## Profile ##
 
 Apart from the `User` model, users can also have a Profile model. This can hold extra information that's
-  intended to be public accessible: a short bio, profile photo, avatar, location and the like. **Pluto** doesn't 
+  intended to be public: a short bio, profile photo, avatar, location and the like. **Pluto** doesn't 
   implement a Profile model itself, but it does support it.
   
 A Profile is a standard [`ActiveRecord`](https://www.yiiframework.com/doc/api/2.0/yii-db-activerecord "Yii2")
@@ -236,7 +236,7 @@ Instead, the `id` field in the Profile's database table should be declared `UNIQ
 The Profile model should be configured as `profileClass` in **Pluto**'s configuration.
     
 Instead of just the class name, the `'profile'` component can also be initialized with a configuration array,
-  with the class name as value of the `'class'` element like on many other places in the
+  with the class name as value of the `'class'` element, like on many other places in the
   Yii2 kingdom.
 
 With this setup, **Pluto** will automatically create a Profile for each registered user. If a 
@@ -249,7 +249,7 @@ For the uninitiated, Roles and Permissions can be daunting. The
  offers some help. Basically, **Roles** are assigned to **Users**, and **Permissions** are used
  to structure the site. One or more **Permissions** are assigned to each **Role**.
  
-Both **Roles** and **Permissions** are subject to **Conditions** (Yii2 calls these 
+Both **Roles** and **Permissions** can be subject to **Conditions** (Yii2 calls these 
  ['Rules'](https://www.yiiframework.com/doc/guide/2.0/en/security-authorization#using-rules "Yii2")).
  They are implemented as PHP classes, extending from 
  [`yii\rbac\Rule`](https://www.yiiframework.com/doc/api/2.0/yii-rbac-rule "Yii2"). **Pluto** looks 
@@ -300,6 +300,8 @@ You can override **Pluto**'s translations by setting the application's
         ],
         // ... still more components ...
     ]
+
+The translations should be in a file called `'pluto.php'`.
 
 If you want a single or only a few messages translated and use **Pluto**'s translations for 
  the main part, the trick is to set up `'i18n'` like above and write your translation file
@@ -371,4 +373,4 @@ just set up the module like this:
     ]
     // ...
 
-Your users will never be confronted with the name 'pluto' again.
+Your users will never be confronted with the name 'pluto'.

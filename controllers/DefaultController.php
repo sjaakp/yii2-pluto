@@ -15,7 +15,6 @@ namespace sjaakp\pluto\controllers;
 
 use Yii;
 use yii\base\InvalidCallException;
-use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
@@ -119,6 +118,7 @@ class DefaultController extends Controller
             'roles' => $roles,
             'flags' => $module->getPwFlags('signup')
         ]);
+        $model->generateToken();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             if ($model->sendTokenEmail(Yii::t('pluto', 'Account registration at {appname}', [
@@ -273,7 +273,7 @@ class DefaultController extends Controller
                 if ($emailChanged)  {
                     $user->sendTokenEmail(Yii::t('pluto', 'Confirm email changed at {appname}', [
                         'appname' => Yii::$app->name
-                    ]), 'email-changed');
+                    ]), 'confirm');
                     Yii::$app->session->setFlash('success',
                         Yii::t('pluto', 'Please check your inbox for verification email.'));
                 }
@@ -392,18 +392,6 @@ class DefaultController extends Controller
         return $this->render('download', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * Give user a chance to override view
-     * @param string $view
-     * @param array $params
-     * @return string
-     */
-    public function render($view, $params = [])
-    {
-        $vw = $this->module->views[$this->id][$view] ?? $view;
-        return parent::render($vw, $params);
     }
 
     /**

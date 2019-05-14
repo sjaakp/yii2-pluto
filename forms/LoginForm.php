@@ -76,7 +76,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password, $params)) {
-                $this->addError($attribute, Yii::t('pluto', 'Incorrect name or password.'));
+                $this->addError($attribute, Yii::t('pluto', 'Incorrect username, email or password.'));
             }
         }
     }
