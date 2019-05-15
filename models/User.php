@@ -90,7 +90,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['name', 'trim'],
             ['name', 'required'],
             ['name', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
-                'message' => Yii::t('pluto', 'This name has already been taken.')],
+                'message' => Yii::t('pluto', 'This name has already been taken')],
             ['name', 'string', 'min' => 2, 'max' => 60],
 
             ['email', 'trim'],
@@ -98,17 +98,12 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             ['email', 'string', 'max' => 128],
             ['email', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
-                'message' => Yii::t('pluto', 'This email address has already been taken.')],
+                'message' => Yii::t('pluto', 'This email address has already been taken')],
 
             ['password', 'required', 'on' => ['create', 'new-pw']],
             ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', 'new_pw']],
             ['password', 'encryptPassword' , 'on' => ['create', 'update', 'new-pw']],
-//            ['password', 'validatePassword', 'on' => ['settings', 'delete']],
-            ['password', function($attribute, $params, $validator) {
-                if (! $this->validatePassword($this->$attribute, $params))   {
-                    $this->addError($attribute, Yii::t('pluto', Yii::t('pluto', 'Incorrect password')));
-                }
-            }, 'on' => ['settings', 'delete']],
+            ['password', 'validatePassword', 'on' => ['settings', 'delete']],
 
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
@@ -159,7 +154,6 @@ class User extends ActiveRecord implements IdentityInterface
         throw new NotSupportedException('Method ' . __CLASS__ . '::' . __METHOD__ . ' is not implemented.');
     }
 
-
     /**
      * {@inheritdoc}
      * IdentityInterface
@@ -185,6 +179,29 @@ class User extends ActiveRecord implements IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->getAuthKey() === $authKey;
+    }
+
+    /**
+     * Inline validation.
+     * @param string $attribute the attribute currently being validated
+     * @param array
+     */
+    public function validatePassword($attribute, $params)
+    {
+        if (! $this->isPasswordValid($this->$attribute)) {
+            $this->addError($attribute, Yii::t('pluto', 'Incorrect password'));
+        }
+    }
+
+    /**
+     * Inline validation, sets password hash.
+     * @param string $attribute the attribute currently being validated
+     * @param array
+     * @throws \yii\base\Exception
+     */
+    public function encryptPassword($attribute, $params)
+    {
+        $this->password_hash = Yii::$app->security->generatePasswordHash($this->$attribute);
     }
 
     /**
@@ -248,18 +265,9 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password, $params)
+    public function isPasswordValid($password)
     {
         return Yii::$app->security->validatePassword($password, $this->password_hash);
-    }
-
-    /**
-     * @param string $password
-     * @throws \yii\base\Exception
-     */
-    public function encryptPassword($attribute, $params)
-    {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($this->$attribute);
     }
 
     /**
@@ -338,7 +346,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * User is never removed from database.
-     * In stead the status is set to STATUS_DELETED, name is changed into a generic name, and other attributes are cleared.
+     * Instead the status is set to STATUS_DELETED, name is changed into a generic name, and other attributes are cleared.
      * Thus dangling foreign pointers (i.e. created_by) are avoided.
      * Profile record, if it exists, is deleted completely.
      * @return false|int
@@ -382,7 +390,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if ($insert)    {
-//            $this->generateToken();
             $this->generateAuthKey();
         }
         if ($this->status == self::STATUS_BLOCKED && $this->isAttributeChanged('status'))   {

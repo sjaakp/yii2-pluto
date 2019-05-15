@@ -44,7 +44,8 @@ class EmailForm extends Model
             ['email', 'exist',
                 'targetClass' => '\sjaakp\pluto\models\User',
                 'filter' => ['status' => $this->status],
-                'message' => Yii::t('pluto', 'There is no user with this email address.')
+                'message' => Yii::t('pluto', 'There is no user with this email address.'),
+                'except' => ['resend']
             ],
         ], $this->captchaRules());
     }

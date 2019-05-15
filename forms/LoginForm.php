@@ -43,10 +43,8 @@ class LoginForm extends Model
         $mod = Module::getInstance();
         return ArrayHelper::merge([
             [['name', 'password'], 'required'],
-            ['rememberMe', 'boolean'],
-
             ['password', 'validatePassword'],
-            ['password', 'match', 'pattern' => $mod->passwordRegexp],
+            ['rememberMe', 'boolean'],
         ], $this->captchaRules(), $this->passwordRules());
     }
 
@@ -65,9 +63,7 @@ class LoginForm extends Model
     }
 
     /**
-     * Validates the password.
-     * This method serves as the inline validation for password.
-     *
+     * Inline validation.
      * @param string $attribute the attribute currently being validated
      * @param array $params the additional name-value pairs given in the rule
      */
@@ -75,7 +71,7 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (!$user || !$user->validatePassword($this->password, $params)) {
+            if (! $user || !$user->isPasswordValid($this->password)) {
                 $this->addError($attribute, Yii::t('pluto', 'Incorrect username, email or password.'));
             }
         }

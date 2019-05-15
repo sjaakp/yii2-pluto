@@ -227,6 +227,7 @@ class DefaultController extends Controller
         $module = $this->module;
 
         $model = new EmailForm([
+            'scenario' => 'resend',
             'status' => User::STATUS_PENDING,
             'flags' => $module->getPwFlags('resend')
         ]);
@@ -268,7 +269,10 @@ class DefaultController extends Controller
 
         if ($user->load($req->post()))   {
             $emailChanged = $user->isAttributeChanged('email');
-            if ($emailChanged) $user->status = User::STATUS_PENDING;
+            if ($emailChanged)  {
+                $user->status = User::STATUS_PENDING;
+                $user->generateToken();
+            }
             if ($user->save()) {
                 if ($emailChanged)  {
                     $user->sendTokenEmail(Yii::t('pluto', 'Confirm email changed at {appname}', [

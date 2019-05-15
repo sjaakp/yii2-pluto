@@ -114,14 +114,12 @@ The installed Roles are:
 |Role|Description|
 |---|---|
 |**'support'**|user who can manage user data (except those from 'admin')|
-|**'admin'**|user with unlimited permissions|
-
-**'admin'** is able to create more Roles and Permissions. 
+|**'admin'**|user with unlimited Permissions, like creating more Roles and Permissions|
 
 #### Integrate in the user interface ####
 
 Now that **Pluto** is installed, it has to be integrated in the user interface of the site. There are dozens of ways
-to accomplish this, but these are some general guidelines:
+to accomplish this, but here are some general guidelines:
 
  - A **guest user** should be offered an opportunity to *log in*. **Pluto**'s login screen
    has options to sign up (register) for new users, and to reset the password.
@@ -282,7 +280,7 @@ All of **Pluto**'s utterances are translatable. The translations are in the `'sj
  
 You can override **Pluto**'s translations by setting the application's 
  [message source](https://www.yiiframework.com/doc/guide/2.0/en/tutorial-i18n#2-configure-one-or-multiple-message-sources "Yii2")
- in the main configuration, like so:
+ in the main configuration, like so: 
 
     <?php
     // ...
@@ -293,7 +291,7 @@ You can override **Pluto**'s translations by setting the application's
                   // ... other translations ...
                  'pluto' => [    // override pluto's standard messages
                      'class' => 'yii\i18n\PhpMessageSource',
-                     'basePath' => '@app/messages',  // this is a defaults
+                     'basePath' => '@app/messages',  // this is a default
                      'sourceLanguage' => 'en-US',    // this as well
                  ],
              ],

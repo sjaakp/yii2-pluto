@@ -42,9 +42,8 @@ class PwChangeForm extends Model
      */
     public function validatePassword($attribute, $params)
     {
-        $r = $this->user->validatePassword($this->$attribute, null);
-        if (! $r) {
-            $this->addError($attribute, Yii::t('pluto', 'Incorrect password.'));
+        if (!($this->user->isPasswordValid($this->$attribute))) {
+            $this->addError($attribute, Yii::t('pluto', 'Incorrect password'));
         }
     }
 
