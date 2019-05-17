@@ -37,7 +37,7 @@ or run:
 
 `composer require sjaakp/yii2-pluto` 
 
-You can manually install **yii2-pluto** by [downloading the source in ZIP-format](https://github.com/sjaakp/yii2-iro/archive/master.zip).
+You can manually install **yii2-pluto** by [downloading the source in ZIP-format](https://github.com/sjaakp/yii2-pluto/archive/master.zip).
  
 #### Module ####
 
@@ -210,7 +210,10 @@ The options (all are optional) are:
  - **formClass** `null|string` Yii2 class used for forms. If `null`, this is set to `ActiveForm`
       in the 'bootstrap' namespace. Default: `null`
  - **multipleRoles** `boolean` Whether more than one role can be assigned to a user. In my 
-      opinion this is generally a very bad idea. Therefore, default: `false`. 
+      opinion this is generally a very bad idea. Therefore, default: `false`.
+ - **fenceMode** `boolean` Whether the site is 'behind a fence', i.e. completely unaccessible
+      for guest users. Every page leads to the login screen. Great for development stages.
+      Default: `false`.       
  - **profileClass** `null|string|array` Name of the class used as [profile](#profile). Can also be a configuration array.
       Default: `null`.
  - **identityClass** `string` Class name of the identity object associated with the current user.

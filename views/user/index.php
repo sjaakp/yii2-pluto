@@ -79,9 +79,11 @@ $this->registerCss('
         'datetimeFormat' => 'short', // 'dd-MM-yyyy HH:mm:ss'
         'nullDisplay' => '',
     ],
-    'tableOptions' => [
-        'class' => 'table table-sm table-bordered'],
-    ]); ?>
+    'tableOptions' => [ 'class' => 'table table-sm table-bordered' ],
+    'summary' => '<div class="small text-info">{begin}-{end}/{totalCount}</div>',
+    'emptyText' => Yii::t('pluto', 'none'),
+    'emptyTextOptions' => [ 'class' => 'small text-info'],
+]); ?>
 
 <?php Pjax::end(); ?>
 
