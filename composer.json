@@ -21,9 +21,5 @@
         "psr-4": {
             "sjaakp\\pluto\\": ""
         }
-    },
-    "extra": {
-        "bootstrap": "sjaakp\\pluto\\Module"
     }
 }
-
