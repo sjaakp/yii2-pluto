@@ -125,7 +125,7 @@ class DefaultController extends Controller
                 'appname' => Yii::$app->name
             ]), 'confirm')) {
                 Yii::$app->session->setFlash('success',
-                    Yii::t('pluto', 'Thank you for registration. Please check your inbox for verification email.'));
+                    Yii::t('pluto', 'Thank you for registering. Please check your inbox for a verification email.'));
                 return $this->goHome();
             }
         }
@@ -171,7 +171,7 @@ class DefaultController extends Controller
                 }
             } else {
                 Yii::$app->session->setFlash('error',
-                    Yii::t('pluto', 'Sorry, we are unable to reset password for this email address.'));
+                    Yii::t('pluto', 'Sorry, we are unable to reset the  password related to this email address.'));
             }
         }
 
@@ -237,11 +237,11 @@ class DefaultController extends Controller
                     'appname' => Yii::$app->name
                 ]), 'confirm'))  {
                 Yii::$app->session->setFlash('success',
-                    Yii::t('pluto', 'Please check your inbox for verification email.'));
+                    Yii::t('pluto', 'Please check your inbox for a verification email.'));
                 return $this->goHome();
             }
             Yii::$app->session->setFlash('error',
-                Yii::t('pluto', 'Sorry, we are unable to resend a verification email for this email address.'));
+                Yii::t('pluto', 'Sorry, we were unable to resend a verification email to this email address.'));
         }
 
         return $this->render('resend', [
@@ -275,11 +275,11 @@ class DefaultController extends Controller
             }
             if ($user->save()) {
                 if ($emailChanged)  {
-                    $user->sendTokenEmail(Yii::t('pluto', 'Confirm email changed at {appname}', [
+                    $user->sendTokenEmail(Yii::t('pluto', 'Confirmation email changed at {appname}', [
                         'appname' => Yii::$app->name
                     ]), 'confirm');
                     Yii::$app->session->setFlash('success',
-                        Yii::t('pluto', 'Please check your inbox for verification email.'));
+                        Yii::t('pluto', 'Please check your inbox for a verification email.'));
                 }
                 else Yii::$app->session->setFlash('success', Yii::t('pluto', 'Settings saved.'));
                 return $this->goBack();
@@ -325,7 +325,7 @@ class DefaultController extends Controller
             if ($user->save(false)) Yii::$app->session->setFlash('success',
                 Yii::t('pluto', 'New password saved.'));
             else  Yii::$app->session->setFlash('error',
-                Yii::t('pluto', 'Sorry, we are unable to change your password.'));
+                Yii::t('pluto', 'Sorry, we were unable to change your password.'));
             return $this->goBack();
         }
 
