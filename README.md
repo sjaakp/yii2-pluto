@@ -375,3 +375,7 @@ just set up the module like this:
     // ...
 
 Your users will never be confronted with the name 'pluto'.
+
+## Thanks ##
+
+ - **rossaddison**: English grammar.
