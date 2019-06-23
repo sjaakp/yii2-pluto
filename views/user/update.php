@@ -11,8 +11,8 @@ use yii\widgets\DetailView;
 $this->title = Yii::t('pluto', 'Update user: {username}', [
     'username' => $model->name,
 ]);
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Users'), 'url' => ['index']];
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 

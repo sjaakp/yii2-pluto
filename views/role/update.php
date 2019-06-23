@@ -12,8 +12,8 @@ use yii\widgets\ListView;
 $this->title = Yii::t('pluto', 'Update Role: {rolename}', [
     'rolename' => $model->name
 ]);
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['index']];
-$this->breadcrumbs[] = Yii::t('pluto', 'Update {rolename}', [
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = Yii::t('pluto', 'Update {rolename}', [
     'rolename' => $model->name
 ]);
 ?>

@@ -13,9 +13,9 @@ use yii\widgets\ListView;
 $this->title = Yii::t('pluto', 'Update Permission: {permissionname}', [
     'permissionname' => $model->name
 ]);
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Permissions'), 'url' => ['index']];
-$this->breadcrumbs[] = Yii::t('pluto', 'Update {permissionname}', [
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Permissions'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = Yii::t('pluto', 'Update {permissionname}', [
     'permissionname' => $model->name
 ]);
 ?>

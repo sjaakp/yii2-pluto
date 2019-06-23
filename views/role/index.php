@@ -24,7 +24,7 @@ $context = $this->context;
 $viewOptions = $context->module->viewOptions;
 
 $this->title = Yii::t('pluto', 'Roles');
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= $this->title ?></h1>
 

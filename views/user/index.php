@@ -25,7 +25,7 @@ $context = $this->context;
 $viewOptions = $context->module->viewOptions;
 
 $this->title = Yii::t('pluto', 'Users');
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = $this->title;
 
 $this->registerCss('
 .filters .form-control {
