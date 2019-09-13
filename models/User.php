@@ -363,7 +363,7 @@ class User extends ActiveRecord implements IdentityInterface
         $this->name = 'nn-' . str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); // 'nn-' plus six digits
         $this->auth_key = null;
         $this->password_hash = null;
-        $this->email = null;
+        $this->email = mt_rand(0, 999999).'@'.mt_rand(0, 999999).'.com';
         $this->deleted_at = new Expression('NOW()');
         $r = $this->save();
 
