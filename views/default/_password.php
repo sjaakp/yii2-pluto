@@ -19,12 +19,18 @@ use sjaakp\pluto\widgets\Password;
 /* @var $options array */
 
 if (in_array('reveal', $model->flags)): ?>
-    <?= $form->field($model, 'password')->widget(Password::class, ['options' => $options ?? []]) ?>
+    <?= $form->field($model, 'password')
+    ->widget(Password::class, ['options' => $options ?? []])
+    ->hint($pwHint)
+    ?>
     <?php if (in_array('double', $model->flags)): ?>
         <?= $form->field($model, 'password_repeat')->widget(Password::class) ?>
     <?php endif;
 else: ?>
-    <?= $form->field($model, 'password')->passwordInput($options ?? []) ?>
+    <?= $form->field($model, 'password')
+    ->passwordInput($options ?? [])
+    ->hint($pwHint)
+    ?>
     <?php if (in_array('double', $model->flags)): ?>
         <?= $form->field($model, 'password_repeat')->passwordInput() ?>
     <?php endif;
