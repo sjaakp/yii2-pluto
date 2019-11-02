@@ -198,7 +198,7 @@ The options (all are optional) are:
     - `'captcha'` Dialog has [captcha field](#captcha).
  - **passwordRegexp** `string` [Regular expression](https://www.php.net/manual/en/reference.pcre.pattern.syntax.php "PHP")
    against which the password is matched. Complex example:
-  `'^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$'` (meaning: at least 8 characters,
+  `'/^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$/'` (meaning: at least 8 characters,
   of which at least one lower case, one upper case, and one digit. To experiment with this,
    use a site like [Live Regex](https://www.phpliveregex.com/). Default: `'/^\S*(?=\S{6,})\S*$/'`.
  - **passwordHint** `string` Textual representation of the above. Default: `'At least 6 characters'`.
