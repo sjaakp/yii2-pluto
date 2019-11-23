@@ -161,8 +161,6 @@ class Module extends YiiModule implements BootstrapInterface
                 'basePath' => '@sjaakp/pluto/messages',
             ];
         }
-
-        if (empty($this->formClass)) $this->formClass = $this->bootstrapNamespace() . '\ActiveForm';
     }
 
     /**
@@ -246,6 +244,7 @@ class Module extends YiiModule implements BootstrapInterface
     /**
      * {@inheritdoc}
      *
+     * @throws InvalidConfigException
      */
     public function bootstrap($app)
     {
@@ -284,6 +283,9 @@ class Module extends YiiModule implements BootstrapInterface
                     return null;
                 });
             }
+
+            if (empty($this->formClass)) $this->formClass = $this->bootstrapNamespace() . '\ActiveForm';
+
         } else {
             /* @var $app ConsoleApplication */
 
