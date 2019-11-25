@@ -90,6 +90,7 @@ return [
     'Reset your password' => 'Laat me een nieuw wachtwoord kiezen',
     'Role' => 'Rol',
     'Roles' => 'Rollen',
+    'Roles with this Permission' => 'Rollen met deze Permissie',
     'Save' => 'Opslaan',
     'Selected' => 'Geselecteerd',
     'Send' => 'Verzenden',

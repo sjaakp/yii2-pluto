@@ -211,8 +211,10 @@ The options (all are optional) are:
       in the 'bootstrap' namespace. Default: `null`
  - **multipleRoles** `boolean` Whether more than one role can be assigned to a user. In my 
       opinion this is generally a very bad idea. Therefore, default: `false`.
- - **fenceMode** `boolean` Whether the site is 'behind a fence', i.e. completely unaccessible
-      for guest users. Every page leads to the login screen. Great for development stages.
+ - **fenceMode** `boolean|string` Whether the site is 'behind a fence', i.e. completely unaccessible
+      for guest users. Every page leads to the login screen. Great for development stages. Can
+      also be a Permission name, in which case only users with this Permission are granted access.
+      Suitable for a site with a separate 'admin' subdomain.
       Default: `false`.       
  - **profileClass** `null|string|array` Name of the class used as [profile](#profile). Can also be a configuration array.
       Default: `null`.

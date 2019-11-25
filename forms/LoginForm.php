@@ -40,7 +40,7 @@ class LoginForm extends Model
      */
     public function rules()
     {
-        $mod = Module::getInstance();
+//        $mod = Module::getInstance();
         return ArrayHelper::merge([
             [['name', 'password'], 'required'],
             ['password', 'validatePassword'],
@@ -69,9 +69,12 @@ class LoginForm extends Model
      */
     public function validatePassword($attribute, $params)
     {
+        $mod = Module::getInstance();
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (! $user || !$user->isPasswordValid($this->password)) {
+            if (! $user
+                || !$user->isPasswordValid($this->password)
+                || (is_string($mod->fenceMode) && ! Yii::$app->authManager->checkAccess($user->id, $mod->fenceMode))) {
                 $this->addError($attribute, Yii::t('pluto', 'Incorrect username, email or password.'));
             }
         }
