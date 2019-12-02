@@ -381,3 +381,4 @@ Your users will never be confronted with the name 'pluto'.
 ## Thanks ##
 
  - **rossaddison**: English grammar.
+ - **paskuale75**: better hints.
