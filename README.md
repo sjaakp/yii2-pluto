@@ -2,6 +2,10 @@ yii2-pluto
 ==========
 ## User management module for Yii2 framework
 
+[![Latest Stable Version](https://poser.pugx.org/sjaakp/yii2-pluto/v/stable)](https://packagist.org/packages/sjaakp/yii2-pluto)
+[![Total Downloads](https://poser.pugx.org/sjaakp/yii2-pluto/downloads)](https://packagist.org/packages/sjaakp/yii2-pluto)
+[![License](https://poser.pugx.org/sjaakp/yii2-pluto/license)](https://packagist.org/packages/sjaakp/yii2-pluto)
+
 **Pluto** is a complete user management module for the [Yii 2.0](https://www.yiiframework.com/ "Yii") PHP Framework.
 
 It manages log in and log out of users, sign up, email-confirmation, blocking and assigning roles.
