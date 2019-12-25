@@ -37,8 +37,8 @@ $gridOptions = [
 ];
 
 $this->title = Yii::t('pluto', 'Conditions');
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= $this->title ?></h1>
 

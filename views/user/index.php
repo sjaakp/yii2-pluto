@@ -25,7 +25,7 @@ $context = $this->context;
 $viewOptions = $context->module->viewOptions;
 
 $this->title = Yii::t('pluto', 'Users');
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = $this->title;
 
 $this->registerCss('
 .filters .form-control {
@@ -57,8 +57,14 @@ $this->registerCss('
         'singleRole',
 //            'created_at',
 //            'updated_at',
-        'lastlogin_at',
-        'login_count',
+        [
+            'attribute' => 'lastlogin_at',
+            'headerOptions' => [ 'class' => 'sort-ordinal' ]
+        ],
+        [
+            'attribute' => 'login_count',
+            'headerOptions' => [ 'class' => 'sort-numerical' ]
+        ],
 
         [
             'class' => 'yii\grid\ActionColumn',

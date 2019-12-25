@@ -2,6 +2,10 @@ yii2-pluto
 ==========
 ## User management module for Yii2 framework
 
+[![Latest Stable Version](https://poser.pugx.org/sjaakp/yii2-pluto/v/stable)](https://packagist.org/packages/sjaakp/yii2-pluto)
+[![Total Downloads](https://poser.pugx.org/sjaakp/yii2-pluto/downloads)](https://packagist.org/packages/sjaakp/yii2-pluto)
+[![License](https://poser.pugx.org/sjaakp/yii2-pluto/license)](https://packagist.org/packages/sjaakp/yii2-pluto)
+
 **Pluto** is a complete user management module for the [Yii 2.0](https://www.yiiframework.com/ "Yii") PHP Framework.
 
 It manages log in and log out of users, sign up, email-confirmation, blocking and assigning roles.
@@ -198,7 +202,7 @@ The options (all are optional) are:
     - `'captcha'` Dialog has [captcha field](#captcha).
  - **passwordRegexp** `string` [Regular expression](https://www.php.net/manual/en/reference.pcre.pattern.syntax.php "PHP")
    against which the password is matched. Complex example:
-  `'^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$'` (meaning: at least 8 characters,
+  `'/^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$/'` (meaning: at least 8 characters,
   of which at least one lower case, one upper case, and one digit. To experiment with this,
    use a site like [Live Regex](https://www.phpliveregex.com/). Default: `'/^\S*(?=\S{6,})\S*$/'`.
  - **passwordHint** `string` Textual representation of the above. Default: `'At least 6 characters'`.
@@ -211,8 +215,10 @@ The options (all are optional) are:
       in the 'bootstrap' namespace. Default: `null`
  - **multipleRoles** `boolean` Whether more than one role can be assigned to a user. In my 
       opinion this is generally a very bad idea. Therefore, default: `false`.
- - **fenceMode** `boolean` Whether the site is 'behind a fence', i.e. completely unaccessible
-      for guest users. Every page leads to the login screen. Great for development stages.
+ - **fenceMode** `boolean|string` Whether the site is 'behind a fence', i.e. completely unaccessible
+      for guest users. Every page leads to the login screen. Great for development stages. Can
+      also be a Permission name, in which case only users with this Permission are granted access.
+      Suitable for a site with a separate 'admin' subdomain.
       Default: `false`.       
  - **profileClass** `null|string|array` Name of the class used as [profile](#profile). Can also be a configuration array.
       Default: `null`.
@@ -375,3 +381,8 @@ just set up the module like this:
     // ...
 
 Your users will never be confronted with the name 'pluto'.
+
+## Thanks ##
+
+ - **rossaddison**: English grammar.
+ - **paskuale75**: better hints.

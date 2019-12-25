@@ -17,14 +17,21 @@ use sjaakp\pluto\widgets\Password;
 /* @var $model sjaakp\pluto\models\User */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $options array */
+/* @var $pwHint string */
 
 if (in_array('reveal', $model->flags)): ?>
-    <?= $form->field($model, 'password')->widget(Password::class, ['options' => $options ?? []]) ?>
+    <?= $form->field($model, 'password')
+    ->widget(Password::class, ['options' => $options ?? []])
+    ->hint($pwHint)
+    ?>
     <?php if (in_array('double', $model->flags)): ?>
         <?= $form->field($model, 'password_repeat')->widget(Password::class) ?>
     <?php endif;
 else: ?>
-    <?= $form->field($model, 'password')->passwordInput($options ?? []) ?>
+    <?= $form->field($model, 'password')
+    ->passwordInput($options ?? [])
+    ->hint($pwHint)
+    ?>
     <?php if (in_array('double', $model->flags)): ?>
         <?= $form->field($model, 'password_repeat')->passwordInput() ?>
     <?php endif;

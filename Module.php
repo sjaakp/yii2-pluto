@@ -129,7 +129,9 @@ class Module extends YiiModule implements BootstrapInterface
     public $formClass;
 
     /**
-     * @var bool    if true, puts the whole site behind a 'fence'
+     * @var bool|string
+     *  if true, puts the whole site behind a 'fence': only authenticated users can enter
+     *  if string: Permission name, only users with Permission can enter
      */
     public $fenceMode = false;
 
@@ -161,8 +163,6 @@ class Module extends YiiModule implements BootstrapInterface
                 'basePath' => '@sjaakp/pluto/messages',
             ];
         }
-
-        if (empty($this->formClass)) $this->formClass = $this->bootstrapNamespace() . '\ActiveForm';
     }
 
     /**
@@ -246,6 +246,7 @@ class Module extends YiiModule implements BootstrapInterface
     /**
      * {@inheritdoc}
      *
+     * @throws InvalidConfigException
      */
     public function bootstrap($app)
     {
@@ -270,10 +271,18 @@ class Module extends YiiModule implements BootstrapInterface
                 ]),
             ]);
 
-            if ($this->fenceMode)   {
+            if ($this->fenceMode !== false)   {
                 $app->on(WebApplication::EVENT_BEFORE_ACTION, function($event) {
+                    $forbidden = false;
                     $user = Yii::$app->user;
-                    if ($user->isGuest)   {
+                    if ($user->isGuest) {
+                        $forbidden = true;
+                    }
+                    else if (is_string($this->fenceMode) && ! $user->can($this->fenceMode))  {
+                        $user->logout();
+                        $forbidden = true;
+                    }
+                    if ($forbidden)   {
                         $action = $event->action->id;
                         if ($event->action->controller->module->id != $this->id ||
                             ! in_array($action, ['login', 'error', 'forgot', 'recover']))   {
@@ -284,6 +293,9 @@ class Module extends YiiModule implements BootstrapInterface
                     return null;
                 });
             }
+
+            if (empty($this->formClass)) $this->formClass = $this->bootstrapNamespace() . '\ActiveForm';
+
         } else {
             /* @var $app ConsoleApplication */
 

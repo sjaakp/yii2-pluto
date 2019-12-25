@@ -13,8 +13,8 @@ $context = $this->context;
 $viewOptions = $context->module->viewOptions;
 
 $this->title = Yii::t('pluto', 'Permissions');
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= $this->title ?></h1>
 

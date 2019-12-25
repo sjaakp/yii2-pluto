@@ -54,6 +54,8 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_PENDING = 2;
     const STATUS_ACTIVE = 3;
 
+    const NEW_PW = 'new-pw';
+
     public $password;
     public $flags = [];
     public $roles = []; // role *names*
@@ -100,9 +102,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
                 'message' => Yii::t('pluto', 'This email address has already been taken')],
 
-            ['password', 'required', 'on' => ['create', 'new-pw']],
-            ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', 'new_pw']],
-            ['password', 'encryptPassword' , 'on' => ['create', 'update', 'new-pw']],
+            ['password', 'required', 'on' => ['create', self::NEW_PW]],
+            ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', self::NEW_PW]],
+            ['password', 'encryptPassword' , 'on' => ['create', 'update',  self::NEW_PW]],
             ['password', 'validatePassword', 'on' => ['settings', 'delete']],
 
             ['status', 'default', 'value' => self::STATUS_PENDING],
@@ -360,10 +362,18 @@ class User extends ActiveRecord implements IdentityInterface
         }
         $this->scenario = 'delete';
         $this->status = self::STATUS_DELETED;
-        $this->name = 'nn-' . str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); // 'nn-' plus six digits
+        $unique = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); // six digits
+        $this->name = 'nn-' . $unique;
         $this->auth_key = null;
         $this->password_hash = null;
         $this->email = mt_rand(0, 999999).'@'.mt_rand(0, 999999).'.com';
+        /*  Some SQL servers, like MS SQL Server, are not compatible with ANSI standards, and don't allow multiple NULL-values
+            in UNIQUE records. Therefore email gets a random value, conforming to the email-format.
+            With mySQL, email could simply be set to null.
+            Thanks to duocreator and Ross Addison.
+            @link https://stackoverflow.com/a/767702/4270194
+        */
+        $this->email = "$unique@$unique.com";
         $this->deleted_at = new Expression('NOW()');
         $r = $this->save();
 

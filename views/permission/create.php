@@ -7,9 +7,9 @@ use yii\helpers\Html;
 /* @var $rules array */
 
 $this->title = Yii::t('pluto', 'New Permission');
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
-$this->breadcrumbs[] = ['label' => Yii::t('pluto', 'Permissions'), 'url' => ['index']];
-$this->breadcrumbs[] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Roles'), 'url' => ['role/index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Permissions'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 
