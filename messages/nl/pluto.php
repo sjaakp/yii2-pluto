@@ -80,7 +80,7 @@ return [
     'Profile Settings' => 'Profielinstellingen',
     'Reconfirm' => 'Herbevestigen',
     'Register' => 'Registreren',
-    'Remember me' => 'Vergeet mij',
+    'Remember me' => 'Onthoud mij',
     'Remove all' => 'Deselecteer alles',
     'Remove all my personal data from this site permanently.' => 'Verwijder al mijn persoonlijke gegevens permanent van deze site.',
     'Remove all your data from this site' => 'Verwijder al mijn data van deze site',
