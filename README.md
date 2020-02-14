@@ -324,7 +324,7 @@ If you want a single or only a few messages translated and use **Pluto**'s trans
      ]);
 
 
-At the moment, the only language implemented is Dutch. Agreed, it's only the world's
+At the moment, only two languages are implemented: Italian and Dutch. Agreed, Dutch is only the world's
  [52th language](https://en.wikipedia.org/wiki/List_of_languages_by_number_of_native_speakers "Wikipedia"),
  but it happens to be my native tongue. Please, feel invited to translate **Pluto** in 
  other languages. I'll be more than glad to include them into **Pluto**'s next release.
@@ -386,3 +386,4 @@ Your users will never be confronted with the name 'pluto'.
 
  - **rossaddison**: English grammar.
  - **paskuale75**: better hints.
+ - **ettolo**: Italian translation.
