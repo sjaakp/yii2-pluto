@@ -369,6 +369,7 @@ class DefaultController extends Controller
     {
         /* @var $module Module */
         $module = $this->module;
+        $pwHint = $module->passwordHint;
 
         $model =  $this->getCurrentUser();
         $model->scenario = 'settings';
@@ -395,6 +396,7 @@ class DefaultController extends Controller
 
         return $this->render('download', [
             'model' => $model,
+            'pwHint'=> $pwHint
         ]);
     }
 
