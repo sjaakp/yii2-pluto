@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <p class="hint-block"><?= Yii::t('pluto',
                 'Remove all my personal data from this site permanently.') ?></p>
         <?php $form = $module->formClass::begin(); ?>
-            <?= $this->render('_password', ['model' => $model, 'form' => $form, 'options' => ['autofocus' => true]]) ?>
+            <?= $this->render('_password', ['model' => $model, 'form' => $form, 'pwHint'=> $pwHint, 'options' => ['autofocus' => true]]) ?>
             <?= $this->render('_captcha', ['model' => $model, 'form' => $form]) ?>
             <div class="form-group mt-4">
                 <?= Html::submitButton(Yii::t('pluto', 'Forget me'), $viewOptions['button']) ?>
