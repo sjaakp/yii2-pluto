@@ -17,6 +17,7 @@ use sjaakp\pluto\widgets\Password;
 /* @var $model sjaakp\pluto\models\User */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $options array */
+/* @var $pwHint string */
 
 if (in_array('reveal', $model->flags)): ?>
     <?= $form->field($model, 'password')

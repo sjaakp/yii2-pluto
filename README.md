@@ -2,6 +2,10 @@ yii2-pluto
 ==========
 ## User management module for Yii2 framework
 
+[![Latest Stable Version](https://poser.pugx.org/sjaakp/yii2-pluto/v/stable)](https://packagist.org/packages/sjaakp/yii2-pluto)
+[![Total Downloads](https://poser.pugx.org/sjaakp/yii2-pluto/downloads)](https://packagist.org/packages/sjaakp/yii2-pluto)
+[![License](https://poser.pugx.org/sjaakp/yii2-pluto/license)](https://packagist.org/packages/sjaakp/yii2-pluto)
+
 **Pluto** is a complete user management module for the [Yii 2.0](https://www.yiiframework.com/ "Yii") PHP Framework.
 
 It manages log in and log out of users, sign up, email-confirmation, blocking and assigning roles.
@@ -211,8 +215,10 @@ The options (all are optional) are:
       in the 'bootstrap' namespace. Default: `null`
  - **multipleRoles** `boolean` Whether more than one role can be assigned to a user. In my 
       opinion this is generally a very bad idea. Therefore, default: `false`.
- - **fenceMode** `boolean` Whether the site is 'behind a fence', i.e. completely unaccessible
-      for guest users. Every page leads to the login screen. Great for development stages.
+ - **fenceMode** `boolean|string` Whether the site is 'behind a fence', i.e. completely unaccessible
+      for guest users. Every page leads to the login screen. Great for development stages. Can
+      also be a Permission name, in which case only users with this Permission are granted access.
+      Suitable for a site with a separate 'admin' subdomain.
       Default: `false`.       
  - **profileClass** `null|string|array` Name of the class used as [profile](#profile). Can also be a configuration array.
       Default: `null`.
@@ -318,7 +324,7 @@ If you want a single or only a few messages translated and use **Pluto**'s trans
      ]);
 
 
-At the moment, the only language implemented is Dutch. Agreed, it's only the world's
+At the moment, only two languages are implemented: Italian and Dutch. Agreed, Dutch is only the world's
  [52th language](https://en.wikipedia.org/wiki/List_of_languages_by_number_of_native_speakers "Wikipedia"),
  but it happens to be my native tongue. Please, feel invited to translate **Pluto** in 
  other languages. I'll be more than glad to include them into **Pluto**'s next release.
@@ -379,3 +385,5 @@ Your users will never be confronted with the name 'pluto'.
 ## Thanks ##
 
  - **rossaddison**: English grammar.
+ - **paskuale75**: better hints.
+ - **ettolo**: Italian translation.

@@ -5,9 +5,17 @@ use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
+/**
+ * Defines general Roles, Permissions, and Conditions (Rules).
+ *
+ * Class PlutoController
+ * @package sjaakp\pluto
+ */
 class PlutoController extends Controller
 {
     /**
+     * Defines general Roles, Permissions, and Conditions (Rules).
+     *
      * @throws \yii\base\Exception
      * @throws \Exception
      */

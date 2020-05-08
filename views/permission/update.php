@@ -7,8 +7,7 @@ use yii\widgets\ListView;
 /* @var $this yii\web\View */
 /* @var $model sjaakp\pluto\models\Permission */
 /* @var $rules array */
-/* @var $users yii\data\ActiveDataProvider */
-
+/* @var $roles array */
 
 $this->title = Yii::t('pluto', 'Update Permission: {permissionname}', [
     'permissionname' => $model->name
@@ -18,6 +17,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('pluto', 'Permissions'), 'ur
 $this->params['breadcrumbs'][] = Yii::t('pluto', 'Update {permissionname}', [
     'permissionname' => $model->name
 ]);
+
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 
@@ -41,4 +41,15 @@ $this->params['breadcrumbs'][] = Yii::t('pluto', 'Update {permissionname}', [
         'class' => 'yii\i18n\Formatter',
         'datetimeFormat' => 'short'
     ],
+]) ?>
+
+<h4><small><?= Yii::t('pluto', 'Roles with this Permission') ?></small></h4>
+<?= ListView::widget([
+    'dataProvider' => $roles,
+    'itemView' => function ($model, $key, $index, $widget) {
+        return Html::a($model->name, ['role/update', 'id' => $model->name]);
+    },
+    'summary' => '<div class="small text-info">{begin}-{end}/{totalCount}</div>',
+    'emptyText' => Yii::t('pluto', 'none'),
+    'emptyTextOptions' => [ 'class' => 'small text-info'],
 ]) ?>

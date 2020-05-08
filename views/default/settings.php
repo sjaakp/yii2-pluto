@@ -10,6 +10,7 @@ use yii\helpers\Html;
 $context = $this->context;
 $module = $context->module;
 $viewOptions = $module->viewOptions;
+$pwHint = $module->passwordHint;
 
 $this->title = Yii::t('pluto', 'Settings');
 $this->params['breadcrumbs'][] = $this->title;
@@ -23,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
                 <?= $form->field($model, 'email')->textInput() ?>
             </fieldset>
-            <?= $this->render('_password', ['model' => $model, 'form' => $form]) ?>
+            <?= $this->render('_password', ['model' => $model, 'form' => $form, 'pwHint' => $pwHint ]) ?>
             <?= $this->render('_captcha', ['model' => $model, 'form' => $form]) ?>
             <div class="form-group mb-4">
                 <?= Html::submitButton(Yii::t('pluto', 'Save'), $viewOptions['button']) ?>
