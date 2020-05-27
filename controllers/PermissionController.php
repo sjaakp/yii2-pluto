@@ -91,9 +91,19 @@ class PermissionController extends Controller
             return $this->redirect(['index']);
         }
 
+        $rList = Yii::$app->authManager->getRoles();
+        $roles = [];
+        foreach ($rList as $role)   {
+            $pnames = ArrayHelper::getColumn(Yii::$app->authManager->getPermissionsByRole($role->name), 'name');
+            if (in_array($model->name, $pnames)) $roles[] = $role;
+        }
+
         return $this->render('update', [
             'model' => $model,
             'rules' => $this->getRules(),
+            'roles' => new ArrayDataProvider([
+                'allModels' => $roles
+            ])
         ]);
     }
 

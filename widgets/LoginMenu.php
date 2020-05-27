@@ -27,6 +27,11 @@ class LoginMenu extends Widget
     public $options = [];
 
     /**
+     * @var array more items for the dropdown
+     */
+    public $extraItems = [];
+
+    /**
      * @var string route to profile update
      */
     public $profileUpdate = '/profile/update';
@@ -83,6 +88,10 @@ class LoginMenu extends Widget
             ],
         ];
         if ($manageUsers || $manageRoles)   {
+            $items[] = '<div class="dropdown-divider"></div>';
+        }
+        if (count($this->extraItems))   {
+            $items = array_merge($items, $this->extraItems);
             $items[] = '<div class="dropdown-divider"></div>';
         }
         $items[] = [

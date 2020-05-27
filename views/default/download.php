@@ -10,6 +10,7 @@ use yii\helpers\Html;
 $context = $this->context;
 $module = $context->module;
 $viewOptions = $module->viewOptions;
+$pwHint = $module->passwordHint;
 
 $this->title = Yii::t('pluto', 'Download');
 $this->params['breadcrumbs'][] = $this->title;
@@ -20,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <p class="hint-block"><?= Yii::t('pluto',
                 'Download all my data in a text file from this site to my computer.') ?></p>
         <?php $form = $module->formClass::begin(); ?>
-            <?= $this->render('_password', ['model' => $model, 'form' => $form, 'pwHint'=> $pwHint, 'options' => ['autofocus' => true]]) ?>
+            <?= $this->render('_password', ['model' => $model, 'form' => $form, 'pwHint' => $pwHint, 'options' => ['autofocus' => true]]) ?>
             <?= $this->render('_captcha', ['model' => $model, 'form' => $form]) ?>
             <div class="form-group mt-4">
                 <?= Html::submitButton(Yii::t('pluto', 'Download'), $viewOptions['button']) ?>
