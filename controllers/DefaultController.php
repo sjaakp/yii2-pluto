@@ -343,6 +343,7 @@ class DefaultController extends Controller
     {
         /* @var $module Module */
         $module = $this->module;
+        $pwHint = $module->passwordHint;
 
         $model = $this->getCurrentUser();
         $model->scenario = 'delete';
@@ -357,6 +358,7 @@ class DefaultController extends Controller
 
         return $this->render('delete', [
             'model' => $model,
+            'pwHint'=> $pwHint
         ]);
     }
 
@@ -369,6 +371,7 @@ class DefaultController extends Controller
     {
         /* @var $module Module */
         $module = $this->module;
+        $pwHint = $module->passwordHint;
 
         $model =  $this->getCurrentUser();
         $model->scenario = 'settings';
@@ -395,6 +398,7 @@ class DefaultController extends Controller
 
         return $this->render('download', [
             'model' => $model,
+            'pwHint'=> $pwHint
         ]);
     }
 

@@ -55,6 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 3;
 
     const NEW_PW = 'new-pw';
+    const SETTINGS = 'settings';
 
     public $password;
     public $flags = [];
@@ -92,7 +93,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['name', 'trim'],
             ['name', 'required'],
             ['name', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
-                'message' => Yii::t('pluto', 'This name has already been taken')],
+                'message' => Yii::t('pluto', 'This name has already been taken'),
+                'except' => [self::NEW_PW, self::SETTINGS, 'update']
+            ],
             ['name', 'string', 'min' => 2, 'max' => 60],
 
             ['email', 'trim'],
@@ -100,7 +103,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             ['email', 'string', 'max' => 128],
             ['email', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
-                'message' => Yii::t('pluto', 'This email address has already been taken')],
+                'message' => Yii::t('pluto', 'This email address has already been taken'),
+                'except' => [self::NEW_PW, self::SETTINGS, 'update']
+            ],
 
             ['password', 'required', 'on' => ['create', self::NEW_PW]],
             ['password', 'match', 'pattern' => $mod->passwordRegexp, 'on' => ['create', 'update', self::NEW_PW]],
