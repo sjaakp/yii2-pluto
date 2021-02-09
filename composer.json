@@ -14,7 +14,7 @@
         "php": ">=7.0.0",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap4": "^2.0",
-        "yiisoft/yii2-swiftmailer": "~2.0.0",
+        "yiisoft/yii2-swiftmailer": "~2.0",
         "softark/yii2-dual-listbox": "~1.0"
     },
     "autoload": {
