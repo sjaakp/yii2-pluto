@@ -4,14 +4,16 @@ namespace sjaakp\pluto\migrations;
 
 use yii\db\Migration;
 
-class m000000_000000_init extends Migration
+class m900000_000000_init extends Migration
 {
-    public function up()
+
+    public function createPlutoUserTable()
     {
         $tableOptions = null;
+        
         if ($this->db->driverName === 'mysql') {
             $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE=InnoDB';
-        }
+        } 
 
         $this->createTable('{{%user}}', [
             'id' => $this->primaryKey()->unsigned(),
@@ -28,6 +30,20 @@ class m000000_000000_init extends Migration
             'lastlogin_at' => $this->timestamp()->null(),
             'login_count' => $this->integer()->unsigned()->defaultValue(0)
         ], $tableOptions);
+    }
+    public function up()
+    {
+
+        $tableName = $this->db->tablePrefix . '{{%user}}';
+        if ($this->db->getTableSchema($tableName, true) === null) {
+            $this->createPlutoUserTable();
+        } else {
+            // Long term you should create a seporate table that you pull in you idendity model (profile?)
+            // This is a quick fix, updating the default would be better (non breaking):
+
+            $this->dropTable('{{%user}}');
+            $this->createPlutoUserTable();
+        }
     }
 
     public function down()
