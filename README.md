@@ -1,4 +1,4 @@
-yii2-pluto x
+yii2-pluto
 ==========
 ## User management module for Yii2 framework
 
@@ -10,7 +10,9 @@ yii2-pluto x
 
 It manages log in and log out of users, sign up, email-confirmation, blocking and assigning roles.
 Users can change their email-address, ask for a reset of their password. 
-The site administrator can define roles and permissions and assign permissions to roles. 
+The site administrator can define roles and permissions and assign permissions to roles.
+
+A credit field has been added to the user model for keeping a balance per user.
 
 A demonstration of **Pluto** is [here](https://demo.sjaakpriester.nl).
 
