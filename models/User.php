@@ -93,9 +93,9 @@ class User extends ActiveRecord implements IdentityInterface
         $r = ArrayHelper::merge([
             ['name', 'trim'],
             ['name', 'required'],
-            ['name', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
+            ['name', 'unique',
                 'message' => Yii::t('pluto', 'This name has already been taken'),
-                'except' => [self::NEW_PW, self::SETTINGS, 'update']
+                'except' => [self::NEW_PW]
             ],
             ['name', 'string', 'min' => 2, 'max' => 60],
 
@@ -103,9 +103,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'required', 'except' => 'delete'],
             ['email', 'email'],
             ['email', 'string', 'max' => 128],
-            ['email', 'unique', 'targetClass' => '\sjaakp\pluto\models\User',
+            ['email', 'unique',
                 'message' => Yii::t('pluto', 'This email address has already been taken'),
-                'except' => [self::NEW_PW, self::SETTINGS, 'update']
+                'except' => [self::NEW_PW]
             ],
 
             ['password', 'required', 'on' => ['create', self::NEW_PW]],
