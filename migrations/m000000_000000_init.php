@@ -26,8 +26,7 @@ class m000000_000000_init extends Migration
             'blocked_at' => $this->timestamp()->null(),
             'deleted_at' => $this->timestamp()->null(),
             'lastlogin_at' => $this->timestamp()->null(),
-			'login_count' => $this->integer()->unsigned()->defaultValue(0),
-			'credits' => $this->smallInteger(6)->notNull()->defaultValue(0),
+            'login_count' => $this->integer()->unsigned()->defaultValue(0)
         ], $tableOptions);
     }
 
