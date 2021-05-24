@@ -59,7 +59,8 @@ class DefaultController extends Controller
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
+                'imageLibrary' => 'gd', // use gd instead of imagick            ],
+            ]
         ];
     }
 
