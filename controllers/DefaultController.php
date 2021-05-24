@@ -60,7 +60,8 @@ class DefaultController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
                 'imageLibrary' => 'gd', // use gd instead of imagick
-			],
+                'fontFile' => '@app/web/fonts/Roboto-Slab-700.ttf',
+            ],
         ];
     }
 
