@@ -31,16 +31,16 @@ class DefaultController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout', 'settings', 'pw-change', 'delete', 'download'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
+			'access' => [
+				'class' => AccessControl::class,
+				'only' => ['logout', 'settings', 'pw-change', 'delete', 'download'],
+				'rules' => [
+					[
+						'allow' => true,
+						'roles' => ['@'],
+					],
+				],
+			],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -58,9 +58,14 @@ class DefaultController extends Controller
         return [
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-                'imageLibrary' => 'gd', // use gd instead of imagick
                 'fontFile' => '@app/web/fonts/Roboto-Slab-700.ttf',
+                'transparent' => true,
+                'foreColor' => 0x03588c,
+//                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+//                'imageLibrary' => 'gd', // use gd instead of imagick
+//                'offset' => '-2',
+//                'maxLength' => '22',
+//                'testLimit' => '3',
             ],
         ];
     }
