@@ -57,6 +57,7 @@ class DefaultController extends Controller
     {
         return [
             'captcha' => [
+//                'class' => 'yii\captcha\CaptchaAction',
                 'class' => 'common\components\Captcha',
                 'fontFile' => '@app/web/fonts/Roboto-Slab-700.ttf',
                 'transparent' => true,
@@ -87,7 +88,7 @@ class DefaultController extends Controller
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->goHome();
         } else {
             $model->password = '';
 
