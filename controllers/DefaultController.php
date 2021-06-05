@@ -57,7 +57,7 @@ class DefaultController extends Controller
     {
         return [
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class' => 'common\components\Captcha',
                 'fontFile' => '@app/web/fonts/Roboto-Slab-700.ttf',
                 'transparent' => true,
                 'foreColor' => 0x03588c,
