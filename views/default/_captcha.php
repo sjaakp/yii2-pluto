@@ -11,8 +11,7 @@
  * https://sjaakpriester.nl
  */
 
-//use yii\captcha\Captcha;
-use common\components\Captcha;
+use yii\captcha\Captcha;
 
 /* @var $this yii\web\View */
 /* @var $model sjaakp\pluto\models\User */
