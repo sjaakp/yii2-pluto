@@ -38,8 +38,7 @@ class DefaultController extends Controller
 					[
 						'allow' => true,
 						'roles' => ['@'],
-					],else {
-		Yii::$app->se
+					],
 				],
 			],
 			'verbs' => [
@@ -89,7 +88,7 @@ class DefaultController extends Controller
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            Yii::info(Yii::$app->user->identity->teacher->email . ' logged in.', 'musikario');
+            Yii::info(Yii::$app->user->identity->email . ' logged in.', 'musikario');
             return $this->goBack();
         } else {
             $model->password = '';
@@ -105,7 +104,7 @@ class DefaultController extends Controller
      */
     public function actionLogout()
     {
-        Yii::info(Yii::$app->user->identity->teacher->email . ' logged out.', 'musikario');
+        Yii::info(Yii::$app->user->identity->email . ' logged out.', 'musikario');
         Yii::$app->user->logout();
         return $this->goHome();
     }
@@ -137,7 +136,7 @@ class DefaultController extends Controller
             ]), 'confirm')) {
                 Yii::$app->session->setFlash('success',
                     Yii::t('pluto', 'Thank you for registering. Please check your inbox for a verification email.'));
-                Yii::info(Yii::$app->user->identity->teacher->email . ' signed up.', 'musikario');
+                Yii::info(Yii::$app->user->identity->email . ' signed up.', 'musikario');
                 return $this->goHome();
             }
         }
@@ -179,13 +178,13 @@ class DefaultController extends Controller
                     ]), 'recover')) {
                     Yii::$app->session->setFlash('success',
                         Yii::t('pluto', 'Please check your inbox for further instructions.'));
-                    Yii::info(Yii::$app->user->identity->teacher->email . ' forgot password.', 'musikario');
+                    Yii::info(Yii::$app->user->identity->email . ' forgot password.', 'musikario');
                     return $this->goHome();
                 }
             } else {
                 Yii::$app->session->setFlash('error',
                     Yii::t('pluto', 'Sorry, we are unable to reset the  password related to this email address.'));
-                    Yii::error(Yii::$app->user->identity->teacher->email . ' resent verification email failed.', 'musikario');
+                    Yii::error(Yii::$app->user->identity->email . ' resent verification email failed.', 'musikario');
             }
         }
 
@@ -217,7 +216,7 @@ class DefaultController extends Controller
                     if (Yii::$app->user->login($model)) {
                         Yii::$app->session->setFlash('success',
                             Yii::t('pluto', 'New password saved. You are now logged in.'));
-                        Yii::info(Yii::$app->user->identity->teacher->email . ' recovered password.', 'musikario');
+                        Yii::info(Yii::$app->user->identity->email . ' recovered password.', 'musikario');
                         return $this->goHome();
                     }
                 }
@@ -252,12 +251,12 @@ class DefaultController extends Controller
                 ]), 'confirm'))  {
                 Yii::$app->session->setFlash('success',
                     Yii::t('pluto', 'Please check your inbox for a verification email.'));
-                Yii::info(Yii::$app->user->identity->teacher->email . ' resent verification email.', 'musikario');
+                Yii::info(Yii::$app->user->identity->email . ' resent verification email.', 'musikario');
                 return $this->goHome();
             }
             Yii::$app->session->setFlash('error',
                 Yii::t('pluto', 'Sorry, we were unable to resend a verification email to this email address.'));
-                Yii::error(Yii::$app->user->identity->teacher->email . ' unable to resend a verification email to this email address.', 'musikario');
+                Yii::error(Yii::$app->user->identity->email . ' unable to resend a verification email to this email address.', 'musikario');
         }
 
         return $this->render('resend', [
@@ -296,11 +295,11 @@ class DefaultController extends Controller
                     ]), 'confirm');
                     Yii::$app->session->setFlash('success',
                         Yii::t('pluto', 'Please check your inbox for a verification email.'));
-                        Yii::info(Yii::$app->user->identity->teacher->email . ' wants to change email.', 'musikario');
+                        Yii::info(Yii::$app->user->identity->email . ' wants to change email.', 'musikario');
                 }
                 else {
                     Yii::$app->session->setFlash('success', Yii::t('pluto', 'Settings saved.'));
-                    Yii::info(Yii::$app->user->identity->teacher->email . ' changed email.', 'musikario');
+                    Yii::info(Yii::$app->user->identity->email . ' changed settings.', 'musikario');
                 }
                 return $this->goBack();
             }
@@ -345,11 +344,11 @@ class DefaultController extends Controller
             if ($user->save(false)) {
                 Yii::$app->session->setFlash('success',
                     Yii::t('pluto', 'New password saved.'));
-                Yii::info(Yii::$app->user->identity->teacher->email . ' set new password.', 'musikario');
+                Yii::info(Yii::$app->user->identity->email . ' set new password.', 'musikario');
             }
             else  Yii::$app->session->setFlash('error',
                 Yii::t('pluto', 'Sorry, we were unable to change your password.'));
-                Yii::error(Yii::$app->user->identity->teacher->email . ' could not set new password.', 'musikario');
+                Yii::error(Yii::$app->user->identity->email . ' could not set new password.', 'musikario');
             return $this->goBack();
         }
 
@@ -374,7 +373,7 @@ class DefaultController extends Controller
         $model->flags = $module->getPwFlags('delete');
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            Yii::info(Yii::$app->user->identity->teacher->email . ' deleted account.', 'musikario');
+            Yii::info(Yii::$app->user->identity->email . ' deleted account.', 'musikario');
             Yii::$app->user->logout();
             $model->delete();
 
@@ -416,7 +415,7 @@ class DefaultController extends Controller
             $now = date('Y-m-d H:i:s');
             $line = str_repeat('=', 32);
             $content = "User data at $appName\r\n$line\r\nGenerated at $now\r\n\r\n" . implode("\r\n", $csv);
-            Yii::info(Yii::$app->user->identity->teacher->email . ' downloaded personal data.', 'musikario');
+            Yii::info(Yii::$app->user->identity->email . ' downloaded personal data.', 'musikario');
             return Yii::$app->response->sendContentAsFile($content, "$appName.txt", [
                 'mimeType' => 'text/plain',
             ]);
