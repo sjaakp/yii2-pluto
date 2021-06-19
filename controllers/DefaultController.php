@@ -136,7 +136,7 @@ class DefaultController extends Controller
             ]), 'confirm')) {
                 Yii::$app->session->setFlash('success',
                     Yii::t('pluto', 'Thank you for registering. Please check your inbox for a verification email.'));
-                Yii::info(Yii::$app->user->identity->email . ' signed up.', 'musikario');
+                Yii::info('New user ' . $model->email . ' signed up.', 'musikario');
                 return $this->goHome();
             }
         }
@@ -440,12 +440,13 @@ class DefaultController extends Controller
             $user->status = User::STATUS_ACTIVE;
             if ($user->save(false)) {
                 if (Yii::$app->user->login($user)) {
+                    Yii::info('User ' . $user->email . ' validated.', 'musikario');
                     Yii::$app->session->setFlash('success', $successFlash);
                     return $this->goHome();
                 }
             }
         }
-
+        Yii::error('Error validating user.', 'musikario');
         Yii::$app->session->setFlash('error', $errorFlash);
         return $this->goHome();
     }

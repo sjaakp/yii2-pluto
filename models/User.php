@@ -383,7 +383,7 @@ class User extends ActiveRecord implements IdentityInterface
         */
         $this->email = "$unique@$unique.com";
         $this->deleted_at = new Expression('NOW()');
-        $r = $this->save();
+        $r = $this->save(false);
 
         $auth = Yii::$app->authManager;
         $auth->revokeAll($this->id);    // revoke all roles
