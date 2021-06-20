@@ -64,8 +64,9 @@ class DefaultController extends Controller
                 'foreColor' => 0x03588c,
 //                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
 //                'imageLibrary' => 'gd', // use gd instead of imagick
-                'offset' => '-1',
-//                'maxLength' => '22',
+                'offset' => '0',
+                'minLength' => '4',
+                'maxLength' => '6',
 //                'testLimit' => '3',
             ],
         ];
