@@ -59,12 +59,12 @@ class DefaultController extends Controller
             'captcha' => [
 //                'class' => 'yii\captcha\CaptchaAction',
                 'class' => 'common\components\Captcha',
-//                'fontFile' => '@app/web/fonts/Roboto-Slab-700.ttf',
+                'fontFile' => '@app/web/fonts/Roboto-Slab-700.ttf',
                 'transparent' => true,
                 'foreColor' => 0x03588c,
 //                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
 //                'imageLibrary' => 'gd', // use gd instead of imagick
-                'offset' => '0',
+                'offset' => '-1',
                 'minLength' => '4',
                 'maxLength' => '6',
 //                'testLimit' => '3',
