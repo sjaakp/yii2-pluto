@@ -326,7 +326,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return $mailer
             ->compose($mailView, $options)
-            ->setFrom([$from => Yii::$app->name . ' robot'])
+            ->setFrom([$from => Yii::$app->name])
             ->setTo($this->email)
             ->setSubject($subject)
             ->send();
