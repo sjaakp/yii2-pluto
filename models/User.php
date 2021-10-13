@@ -134,6 +134,7 @@ class User extends ActiveRecord implements IdentityInterface
             'name' => Yii::t('pluto', 'Username'),
             'email' => Yii::t('pluto', 'Email'),
             'password' => Yii::t('pluto', 'Password'),
+            'terms' => Yii::t('pluto', 'I accept the terms and conditions.'),
             'password_repeat' => Yii::t('pluto', 'Password (again)'),
             'captcha' => Yii::t('pluto', 'Verify'),
             'statusText' => Yii::t('pluto', 'Status'),
