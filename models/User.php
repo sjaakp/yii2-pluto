@@ -115,7 +115,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['password', 'validatePassword', 'on' => ['settings', 'delete']],
 
 			['terms', 'boolean', 'trueValue' => 1, 'falseValue' => 0],
-			['terms', 'compare', 'compareValue' => 1, 'operator' => '==', 'type' => 'number'],
+			['terms', 'compare', 'compareValue' => 1, 'operator' => '==', 'type' => 'number', 'message' => Yii::t('pluto', 'The terms and conditions have to be accepted') ],
 
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
