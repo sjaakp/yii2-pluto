@@ -59,6 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
     const SETTINGS = 'settings';
 
     public $password;
+    public $agb;
     public $flags = [];
     public $roles = []; // role *names*
 
