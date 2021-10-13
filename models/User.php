@@ -114,6 +114,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['password', 'encryptPassword' , 'on' => ['create', 'update',  self::NEW_PW]],
             ['password', 'validatePassword', 'on' => ['settings', 'delete']],
 
+			['terms', 'boolean', 'trueValue' => true, 'falseValue' => false],
+			['terms', 'compare', 'compareValue' => true, 'operator' => '==', 'type' => 'number'],
+
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
             ['status', 'required', 'on' => ['create', 'update']],
