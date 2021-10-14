@@ -179,7 +179,7 @@ class DefaultController extends Controller
                     ]), 'recover')) {
                     Yii::$app->session->setFlash('success',
                         Yii::t('pluto', 'Please check your inbox for further instructions.'));
-                    Yii::info(Yii::$app->user->identity->email . ' forgot password.', 'musikario');
+                    Yii::info($model->email . ' forgot password.', 'musikario');
                     return $this->goHome();
                 }
             } else {
