@@ -35,8 +35,6 @@ if (! $model->isNewRecord) $pwHint .= '; ' . Yii::t('pluto', 'if empty, password
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'credits')->textInput([]) ?>
-
     <?= $form->field($model, 'password')->hint($pwHint)->textInput() ?>
 
     <div class="row mb-3">

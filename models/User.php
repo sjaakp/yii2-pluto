@@ -42,7 +42,6 @@ use sjaakp\pluto\Module;
  * @property string $username [varchar(255)]
  * @property string $password_reset_token [varchar(255)]
  * @property int $role [smallint(6)]
- * @property int $credits [smallint(6)]
  *
  * @method touch($attribute)
  */
@@ -116,8 +115,6 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_BLOCKED, self::STATUS_DELETED]],
             ['status', 'required', 'on' => ['create', 'update']],
-
-            ['credits', 'integer', 'min' => 0],
 
             [['singleRole', 'roles'], 'safe']
         ], $this->captchaRules(), $this->passwordRules());
