@@ -48,7 +48,7 @@ return [
     'Included Permissions' => 'Permessi inclusi',
     'Included Roles' => 'Ruoli inclusi',
     'Incorrect password' => 'Password sbagliata',
-    'Incorrect username, email or password.' => 'Username, email o password sbagliati',
+    'Incorrect username, email or password, or the user has not been validated with the link sent by email.' => 'Nome utente, e-mail o password errati, oppure l\'utente non è stato convalidato con il link inviato via e-mail.',
     'Last Login at' => 'Ultimo accesso il',
     'Login' => 'Accedi',
     'Login Count' => 'Numero accessi',
