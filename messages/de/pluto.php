@@ -21,7 +21,7 @@ return [
     'At least 6 characters length' => 'Mindestens 6 Zeichen Länge',
     'Change password' => 'Passwort ändern',
     'Change these fields' => 'Ändere diese Felder',
-    'Change your password' => 'Ändere dein Passwort',
+    'Change your password' => 'Ändern Sie Ihr Passwort',
     'Download all my data in a text file from this site to my computer.' => 'Lade alle meine Daten in einer Textdatei von dieser Website auf meinen Computer herunter.',
     'Email' => 'E-Mail-Adresse',
     'Enter verification code' => 'Verifizierungscode eingeben',
