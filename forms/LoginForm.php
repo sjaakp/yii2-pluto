@@ -75,7 +75,7 @@ class LoginForm extends Model
             if (! $user
                 || !$user->isPasswordValid($this->password)
                 || (is_string($mod->fenceMode) && ! Yii::$app->authManager->checkAccess($user->id, $mod->fenceMode))) {
-                $this->addError($attribute, Yii::t('pluto', 'Incorrect username, email or password.'));
+                $this->addError($attribute, Yii::t('pluto', 'Incorrect username, email or password, or the user has not been validated with the link sent by email.'));
             }
         }
     }

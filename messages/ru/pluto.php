@@ -48,7 +48,7 @@ return [
     'Included Permissions' => 'Включаемые разрешения',
     'Included Roles' => 'Включаемые роли',
     'Incorrect password' => 'Неверный пароль',
-    'Incorrect username, email or password.' => 'Onjuiste gebruikersnaam, e-mail of wachtwoord',
+    'Incorrect username, email or password, or the user has not been validated with the link sent by email.' => 'Неверное имя пользователя, электронная почта или пароль, или пользователь не прошел проверку по ссылке, отправленной по электронной почте.',
     'Last Login at' => 'Последний вход',
     'Login' => 'Войти',
     'Login Count' => 'Количество попыток входа',

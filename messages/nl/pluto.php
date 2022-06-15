@@ -48,7 +48,7 @@ return [
     'Included Permissions' => 'Inbegrepen Permissies',
     'Included Roles' => 'Inbegrepen Rollen',
     'Incorrect password' => 'Onjuist wachtwoord',
-    'Incorrect username, email or password.' => 'Onjuiste gebruikersnaam, e-mail of wachtwoord',
+    'Incorrect username, email or password, or the user has not been validated with the link sent by email.' => 'Onjuiste gebruikersnaam, e-mail of wachtwoord, of de gebruiker is niet gevalideerd met de link die per e-mail is verzonden.',
     'Last Login at' => 'Laatste login',
     'Login' => 'Aanmelden',
     'Login Count' => 'Aantal logins',
