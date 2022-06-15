@@ -55,9 +55,8 @@ $this->registerCss('
         'email:email',
         'statusText',
         'singleRole',
-        'credits',
-        'created_at',
-        'updated_at',
+//            'created_at',
+//            'updated_at',
         [
             'attribute' => 'lastlogin_at',
             'headerOptions' => [ 'class' => 'sort-ordinal' ]
