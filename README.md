@@ -1,4 +1,4 @@
-yii2-pluto x
+yii2-pluto
 ==========
 ## User management module for Yii2 framework
 
