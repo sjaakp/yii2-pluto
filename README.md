@@ -47,7 +47,7 @@ You can manually install **yii2-pluto** by [downloading the source in ZIP-format
 
 **Pluto** is a [module](https://www.yiiframework.com/doc/guide/2.0/en/structure-modules#using-modules "Yii2")
  in the Yii2 framework. It has to be configured 
-in the main configuration file, usually called `web.php` or `main.php` in the `config`
+in the main configuration file, usually called `web.php` in the `config`
 directory. Add the following to the configuration array:
 
     <?php
@@ -75,7 +75,9 @@ There probably already is a `bootstrap` property in your configuration file; jus
 add `'pluto'` to it.
 
 **Important**: the module should also be set up in the same way in the console configuration (usually
-called `console.php`).
+called `console.php`). Notice that in some setups, there may be a `main.php` containing the configuration 
+for both web and console tiers. A notable example is the 
+[Yii2 advanced template](https://www.yiiframework.com/extension/yiisoft/yii2-app-advanced/doc/guide/2.0/en).
 
 #### Console commands ####
 
@@ -127,7 +129,7 @@ to accomplish this, but here are some general guidelines:
 
  - A **guest user** should be offered an opportunity to *log in*. **Pluto**'s login screen
    has options to sign up (register) for new users, and to reset the password.
- - An **authenticated** user should be offered an opportunities to *log out*, as well as
+ - An **authenticated** user should be offered opportunities to *log out*, as well as
    to change her settings, etc.
  - Users with special permissions should have options to access **Pluto**'s User Management
    Pages and the like.
@@ -324,7 +326,7 @@ If you want a single or only a few messages translated and use **Pluto**'s trans
      ]);
 
 
-At the moment, only two languages are implemented: Italian and Dutch. Agreed, Dutch is only the world's
+At the moment, only a few languages are implemented: Italian, Russian, and Dutch. Agreed, Dutch is only the world's
  [52th language](https://en.wikipedia.org/wiki/List_of_languages_by_number_of_native_speakers "Wikipedia"),
  but it happens to be my native tongue. Please, feel invited to translate **Pluto** in 
  other languages. I'll be more than glad to include them into **Pluto**'s next release.
@@ -385,5 +387,6 @@ Your users will never be confronted with the name 'pluto'.
 ## Thanks ##
 
  - **rossaddison**: English grammar.
- - **paskuale75**: better hints.
+ - **paskuale75**: better hints, less bugs.
  - **ettolo**: Italian translation.
+ - **Gleb Shaposhnikov**: Russian translation.
